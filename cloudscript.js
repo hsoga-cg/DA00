@@ -65,13 +65,13 @@ handlers.helloExtRest = function (args) {
 		msg0 += " (success. consuming " + resGrant.ItemGrantResults[0].ItemInstanceId + ")";
 
 /*
-	var resConsume = server.ConsumeItem({
+	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
 		ConsumeCount: 1
 //		CharacterId: ""
 	});
-	if(resConsume.RemainingUses == 0) {
+	if(resConsume1.RemainingUses == 0) {
 		// success
 	}
 */
@@ -93,7 +93,7 @@ handlers.helloExtRest = function (args) {
 	return {
 		message: msg0,
 		grantResult: resGrant,
-		consumeResult: resConsume
+//		, consumeResult: resConsume1
 //		, consumeResult2: resConsume2
 		};
 }
