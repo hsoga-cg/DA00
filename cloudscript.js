@@ -34,16 +34,9 @@ handlers.helloExtRest = function (args) {
 			test: "test-data DATA"
 		}
 	});
-
-	var res0 = server.ConsumeItem({
-		PlayFabId: currentPlayerId,
-		ItemInstanceId: "",
-		ConsumeCount: 1
-//		CharacterId: ""
-	});
 */
 
-	var res0 = server.GrantItemsToUsers({
+	var resGrant = server.GrantItemsToUsers({
 		CatalogVersion: "00",
 		ItemGrants: [
 			{
@@ -53,10 +46,39 @@ handlers.helloExtRest = function (args) {
 			}
 		]
 	});
+	var resultsample = {
+		ItemGrantResults: [  
+			{  
+				PlayFabId: "941A46BF4A360962",
+				Result: true,
+				ItemId: "__sys_userlock",
+				ItemInstanceId: "B5D09207887C1A38",
+				ItemClass: "system",
+				PurchaseDate: "2016-03-31T10:17:15.269Z",
+				RemainingUses: 1,
+				Annotation: "system",
+				CatalogVersion: "00",
+				UnitPrice: 0
+			}
+		]
+	};
+	if(resGrant.ItemGrantResults.Result == true) {
+		msg0 += " (success. consuming " + resGrant.ItemGrantResults.ItemInstanceId + ")";
+
+	var resConsume = server.ConsumeItem({
+		PlayFabId: currentPlayerId,
+		ItemInstanceId: resGrant.ItemGrantResults.ItemInstanceId,
+		ConsumeCount: 1
+//		CharacterId: ""
+	});
+	// check http 200?
+
+	}
 
 	return {
 		message: msg0,
-		itemResult: res0
+		grantResult: resGrant,
+		consumeResult: resConsume
 		};
 }
 
