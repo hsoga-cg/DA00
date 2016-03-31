@@ -21,12 +21,6 @@
 
 // ----8< ----
 
-//
-handlers.helloExtRest = function (args) {
-//	var restres = http.request("http://google.com");
-//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
-	var msg0 = "Hello " + currentPlayerId + "!";
-
 /*
 	var updateUserDataResult = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
@@ -34,16 +28,21 @@ handlers.helloExtRest = function (args) {
 			test: "test-data DATA"
 		}
 	});
-*/
 
-	var resGrant = server.GrantItemsToUsers({
+ */
+
+//
+handlers.helloExtRest = function (args) {
+//	var restres = http.request("http://google.com");
+//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
+	var msg0 = "Hello " + currentPlayerId + "!";
+
+	var resGrant = server.GrantItemsToUser({
 		CatalogVersion: "00",
-		ItemGrants: [
-			{
-				PlayFabId: currentPlayerId,
-				ItemId: "__sys_userlock",
-				Annotation: "system"
-			}
+		PlayFabId: currentPlayerId,
+		Annotation: "system",
+		ItemIds: [
+			"__sys_userlock"
 		]
 	});
 	var resultsample = {
@@ -71,14 +70,27 @@ handlers.helloExtRest = function (args) {
 		ConsumeCount: 1
 //		CharacterId: ""
 	});
-	// check http 200?
+	if(resConsume.RemainingUses == 0) {
+		// success
+	}
+
+	var resConsume2 = server.ConsumeItem({
+		PlayFabId: currentPlayerId,
+		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
+		ConsumeCount: 1
+//		CharacterId: ""
+	});
+	if(resConsume2.RemainingUses == 0) {
+		// success
+	}
 
 	}
 
 	return {
 		message: msg0,
 		grantResult: resGrant,
-		consumeResult: resConsume
+		consumeResult: resConsume,
+		consumeResult2: resConsume2
 		};
 }
 
