@@ -224,7 +224,6 @@ handlers.helloExtRest = function (args) {
 		ConsumeCount: 1
 //		CharacterId: ""
 	});
-*/
 
 	var res0 = server.GrantItemsToUsers({
 		CatalogVersion: "00",
@@ -236,8 +235,7 @@ handlers.helloExtRest = function (args) {
 			}
 		]
 	});
-
-	;
+*/
 
 	return { message: msg0 };
 }
