@@ -62,12 +62,12 @@ handlers.helloExtRest = function (args) {
 			}
 		]
 	};
-	if(resGrant.ItemGrantResults.Result == true) {
-		msg0 += " (success. consuming " + resGrant.ItemGrantResults.ItemInstanceId + ")";
+	if(resGrant.ItemGrantResults[0].Result == true) {
+		msg0 += " (success. consuming " + resGrant.ItemGrantResults[0].ItemInstanceId + ")";
 
 	var resConsume = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
-		ItemInstanceId: resGrant.ItemGrantResults.ItemInstanceId,
+		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
 		ConsumeCount: 1
 //		CharacterId: ""
 	});
