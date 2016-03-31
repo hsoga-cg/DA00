@@ -13,8 +13,6 @@
 
 //
 handlers.helloExtRest = function (args) {
-//	var restres = http.request("http://google.com");
-//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
 	var	lockItemId = __user_lock_init();
@@ -23,6 +21,10 @@ handlers.helloExtRest = function (args) {
 	}
 
 	var	bGetLock = __user_lock_get(lockItemId);
+
+	// test calling API on another service
+	var restres = http.request("http://google.com");
+	msg0 += ("\n\n restres -> " + restres.substring(0, 100) + " ::::");
 
 	if(bGetLock) {
 		__user_lock_release(lockItemId);
