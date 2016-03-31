@@ -19,6 +19,59 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+// ----8< ----
+
+//
+handlers.helloExtRest = function (args) {
+//	var restres = http.request("http://google.com");
+//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
+	var msg0 = "Hello " + currentPlayerId + "!";
+
+/*
+	var updateUserDataResult = server.UpdateUserInternalData({
+		PlayFabId: currentPlayerId,
+		Data: {
+			test: "test-data DATA"
+		}
+	});
+
+	var res0 = server.ConsumeItem({
+		PlayFabId: currentPlayerId,
+		ItemInstanceId: "",
+		ConsumeCount: 1
+//		CharacterId: ""
+	});
+*/
+
+	var res0 = server.GrantItemsToUsers({
+		CatalogVersion: "00",
+		ItemGrants: [
+			{
+				PlayFabId: currentPlayerId,
+				ItemId: "__sys_userlock",
+				Annotation: "system"
+			}
+		]
+	});
+
+	return { message: msg0 };
+}
+
+
+handlers.exchangeBillingTrxWithItem = function (args) {
+}
+
+function __user_lock_get() {
+	return	true;
+}
+
+function __user_lock_release() {
+	return;
+}
+
+// ----8< ----
+
+
 // This is a Cloud Script handler function. It runs in the PlayFab cloud and
 // has full access to the PlayFab Game Server API
 // (https://api.playfab.com/Documentation/Server). You can invoke the function
@@ -202,56 +255,3 @@ handlers.RoomEventRaised = function (args) {
             break;
     }
 }
-
-
-//
-handlers.helloExtRest = function (args) {
-//	var restres = http.request("http://google.com");
-//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
-	var msg0 = "Hello " + currentPlayerId + "!";
-
-/*
-	var updateUserDataResult = server.UpdateUserInternalData({
-		PlayFabId: currentPlayerId,
-		Data: {
-			test: "test-data DATA"
-		}
-	});
-
-	var res0 = server.ConsumeItem({
-		PlayFabId: currentPlayerId,
-		ItemInstanceId: "",
-		ConsumeCount: 1
-//		CharacterId: ""
-	});
-
-	var res0 = server.GrantItemsToUsers({
-		CatalogVersion: "00",
-		ItemGrants: [
-			{
-				PlayFabId: currentPlayerId,
-				ItemId: "__sys_userlock",
-				Annotation: "system"
-			}
-		]
-	});
-*/
-
-	return { message: msg0 };
-}
-
-
-/*
-handlers.exchangeBillingTrxWithItem = function (args) {
-}
-
-__user_lock_get() = function () {
-	return	true;
-}
-
-__user_lock_release() = function () {
-	return;
-}
-*/
-
-
