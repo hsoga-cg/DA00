@@ -64,6 +64,7 @@ handlers.helloExtRest = function (args) {
 	if(resGrant.ItemGrantResults[0].Result == true) {
 		msg0 += " (success. consuming " + resGrant.ItemGrantResults[0].ItemInstanceId + ")";
 
+/*
 	var resConsume = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
@@ -73,6 +74,7 @@ handlers.helloExtRest = function (args) {
 	if(resConsume.RemainingUses == 0) {
 		// success
 	}
+*/
 
 /* test double consume
 	var resConsume2 = server.ConsumeItem({
