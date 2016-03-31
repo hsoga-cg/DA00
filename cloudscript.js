@@ -54,7 +54,10 @@ handlers.helloExtRest = function (args) {
 		]
 	});
 
-	return { message: msg0 };
+	return {
+		message: msg0,
+		itemResult: res0
+		};
 }
 
 
