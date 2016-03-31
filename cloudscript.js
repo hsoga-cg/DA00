@@ -91,8 +91,8 @@ handlers.helloExtRest = function (args) {
 	return {
 		message: msg0,
 		grantResult: resGrant,
-		consumeResult: resConsume,
-		consumeResult2: resConsume2
+		consumeResult: resConsume
+//		, consumeResult2: resConsume2
 		};
 }
 
