@@ -241,6 +241,7 @@ handlers.helloExtRest = function (args) {
 }
 
 
+/*
 handlers.exchangeBillingTrxWithItem = function (args) {
 }
 
@@ -251,5 +252,6 @@ __user_lock_get() = function () {
 __user_lock_release() = function () {
 	return;
 }
+*/
 
 
