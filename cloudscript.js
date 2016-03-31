@@ -1,23 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Welcome to your first Cloud Script revision.
-// The examples here provide a quick introduction to using Cloud Script and some
-// ideas about how you might use it in your game.
-//
-// There are two approaches for invoking Cloud Script: calling handler functions directly
-// from the game client using the "RunCloudScript" API, or triggering Photon Webhooks associated with
-// room events. Both approaches are demonstrated in this file. You can use one or the other, or both.
-//
-// Feel free to use this as a starting point for your game server logic, or to replace it altogether.
-// If you have any questions or need advice on where to begin,
-// check out the resources at https://playfab.com/cloud-script or check our forums at
-// https://support.playfab.com. For issues which are confidential (involving sensitive intellectual
-// property, for example), please contact our Developer Success team directly at devrel@playfab.com.
-//
-// - The PlayFab Team
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 // ----8< ----
 
@@ -37,6 +17,32 @@ handlers.helloExtRest = function (args) {
 //	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	var	lockItemId = __user_lock_init();
+	if(lockItemId != null) {
+		msg0 += " (success. consuming " + lockItemId + ")";
+	}
+
+	var	bGetLock = __user_lock_get(lockItemId);
+
+	if(bGetLock) {
+		__user_lock_release(lockItemId);
+	}
+
+	return {
+		message: msg0,
+//		grantResult: resGrant,
+//		modifyResult: resModify,
+//		consumeResult: resConsume1,
+//		consumeResult2: resConsume2,
+		dummy: ""
+		};
+}
+
+
+handlers.exchangeBillingTrxWithItem = function (args) {
+}
+
+function __user_lock_init() {
 	var resGrant = server.GrantItemsToUser({
 		CatalogVersion: "00",
 		PlayFabId: currentPlayerId,
@@ -45,6 +51,7 @@ handlers.helloExtRest = function (args) {
 			"__sys_userlock"
 		]
 	});
+/*
 	var resultsample = {
 		ItemGrantResults: [  
 			{  
@@ -61,54 +68,67 @@ handlers.helloExtRest = function (args) {
 			}
 		]
 	};
+*/
 	if(resGrant.ItemGrantResults[0].Result == true) {
-		msg0 += " (success. consuming " + resGrant.ItemGrantResults[0].ItemInstanceId + ")";
+		return	resGrant.ItemGrantResults[0].ItemInstanceId;
+	}
 
+	return	null;
+}
+
+function __user_lock_get(lockItemId) {
+	//
 	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
-		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
+		ItemInstanceId: lockItemId,
 		ConsumeCount: 1
-//		CharacterId: ""
 	});
 	if(resConsume1.RemainingUses == 0) {
 		// success
+		return	true;
+	} else {
+		// failed to get user lock
+		return	false;
 	}
+}
 
-/* test double consume
-	var resConsume2 = server.ConsumeItem({
+function __user_lock_release(lockItemId) {
+	//
+	var resModify = server.ModifyItemUses({
 		PlayFabId: currentPlayerId,
-		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
-		ConsumeCount: 1
-//		CharacterId: ""
+		ItemInstanceId: lockItemId,
+		UsesToAdd: 1
 	});
-	if(resConsume2.RemainingUses == 0) {
+	if(resModify.data.RemainingUses == 1) {
 		// success
+	} else {
+		// need to adjust to 1, but possibly it is program bug.
+		// log it and maybe better to do manual adjustment
 	}
-*/
-
-	}
-
-	return {
-		message: msg0,
-		grantResult: resGrant
-		, consumeResult: resConsume1
-//		, consumeResult2: resConsume2
-		};
-}
-
-
-handlers.exchangeBillingTrxWithItem = function (args) {
-}
-
-function __user_lock_get() {
-	return	true;
-}
-
-function __user_lock_release() {
 	return;
 }
 
 // ----8< ----
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Welcome to your first Cloud Script revision.
+// The examples here provide a quick introduction to using Cloud Script and some
+// ideas about how you might use it in your game.
+//
+// There are two approaches for invoking Cloud Script: calling handler functions directly
+// from the game client using the "RunCloudScript" API, or triggering Photon Webhooks associated with
+// room events. Both approaches are demonstrated in this file. You can use one or the other, or both.
+//
+// Feel free to use this as a starting point for your game server logic, or to replace it altogether.
+// If you have any questions or need advice on where to begin,
+// check out the resources at https://playfab.com/cloud-script or check our forums at
+// https://support.playfab.com. For issues which are confidential (involving sensitive intellectual
+// property, for example), please contact our Developer Success team directly at devrel@playfab.com.
+//
+// - The PlayFab Team
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // This is a Cloud Script handler function. It runs in the PlayFab cloud and
