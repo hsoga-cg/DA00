@@ -36,6 +36,7 @@ handlers.helloExtRest = function (args) {
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
 //		consumeResult2: resConsume2,
+		java: java,
 		dummy: ""
 		};
 }
