@@ -90,7 +90,7 @@ handlers.helloExtRest = function (args) {
 
 	return {
 		message: msg0,
-		grantResult: resGrant,
+		grantResult: resGrant
 		, consumeResult: resConsume1
 //		, consumeResult2: resConsume2
 		};
