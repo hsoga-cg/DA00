@@ -206,20 +206,52 @@ handlers.RoomEventRaised = function (args) {
 
 //
 handlers.helloExtRest = function (args) {
-//  var restres = http.request("http://google.com");
-//  var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
-  var msg0 = "Hello " + currentPlayerId + "!";
+//	var restres = http.request("http://google.com");
+//	var msg0 = "Hello " + currentPlayerId + "! [" + restres + "]";
+	var msg0 = "Hello " + currentPlayerId + "!";
 
-  var updateUserDataResult = server.UpdateUserInternalData({
-      PlayFabId: currentPlayerId,
-      Data: {
-          test: "test-data DATA"
-      }
-  });
+/*
+	var updateUserDataResult = server.UpdateUserInternalData({
+		PlayFabId: currentPlayerId,
+		Data: {
+			test: "test-data DATA"
+		}
+	});
 
-  return { message: msg0 };
+	var res0 = server.ConsumeItem({
+		PlayFabId: currentPlayerId,
+		ItemInstanceId: "",
+		ConsumeCount: 1
+//		CharacterId: ""
+	});
+*/
+
+	var res0 = server.GrantItemsToUsers({
+		CatalogVersion: "00",
+		ItemGrants: [
+			{
+				PlayFabId: currentPlayerId,
+				ItemId: "__sys_userlock",
+				Annotation: "system"
+			}
+		]
+	});
+
+	;
+
+	return { message: msg0 };
 }
 
 
-// test making change
+handlers.exchangeBillingTrxWithItem = function (args) {
+}
+
+__user_lock_get() = function () {
+	return	true;
+}
+
+__user_lock_release() = function () {
+	return;
+}
+
 
