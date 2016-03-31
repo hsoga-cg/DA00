@@ -64,7 +64,6 @@ handlers.helloExtRest = function (args) {
 	if(resGrant.ItemGrantResults[0].Result == true) {
 		msg0 += " (success. consuming " + resGrant.ItemGrantResults[0].ItemInstanceId + ")";
 
-/*
 	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: resGrant.ItemGrantResults[0].ItemInstanceId,
@@ -74,7 +73,6 @@ handlers.helloExtRest = function (args) {
 	if(resConsume1.RemainingUses == 0) {
 		// success
 	}
-*/
 
 /* test double consume
 	var resConsume2 = server.ConsumeItem({
@@ -93,7 +91,7 @@ handlers.helloExtRest = function (args) {
 	return {
 		message: msg0,
 		grantResult: resGrant,
-//		, consumeResult: resConsume1
+		, consumeResult: resConsume1
 //		, consumeResult2: resConsume2
 		};
 }
