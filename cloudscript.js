@@ -19,7 +19,7 @@ handlers.helloExtRest = function (args) {
 
 	var	lockItemId = __user_lock_init();
 	if(lockItemId != null) {
-		msg0 += " (success. consuming " + lockItemId + ")";
+		msg0 += " (success. using " + lockItemId + " as lock object)";
 	}
 
 	var	bGetLock = __user_lock_get(lockItemId);
@@ -99,7 +99,7 @@ function __user_lock_release(lockItemId) {
 		ItemInstanceId: lockItemId,
 		UsesToAdd: 1
 	});
-	if(resModify.data.RemainingUses == 1) {
+	if(resModify.RemainingUses == 1) {
 		// success
 	} else {
 		// need to adjust to 1, but possibly it is program bug.
