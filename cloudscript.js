@@ -57,7 +57,7 @@ handlers.helloExtRest = function (args) {
 	var	bGetLock = __user_lock_get(lockItemId);
 
 	// test calling API on another service
-	var restres = http.request("http://google.com");
+	var restres = http.request("http://www.playonline.com");
 	msg0 += ("\n\n restres -> " + restres.substring(0, 100) + " ::::");
 
 	if(bGetLock) {
