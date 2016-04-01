@@ -11,6 +11,40 @@
 
  */
 
+var __fakeAsync = function (func, cb) {
+  setTimeout(func(cb), 0);
+}
+
+handlers.helloAsyncTest = function () {
+  var count = 0;
+  var max = 3;
+  var counter = function () {
+    return ++count;
+  }
+  for (var i = 0; max > i; i++) {
+    __fakeAsync(function (cb) {
+      // Sync HTTP request
+      var restres = http.request("http://example.com");
+
+      // Server update
+      server.UpdateUserInternalData({
+	      PlayFabId: currentPlayerId,
+		    Data: {
+			    test: String(Math.random())
+		    }
+	    });
+	    // to handle async function, but in this case...
+	    cb();
+    }, function () {
+      var count = counter();
+      if (count === max) {
+        console.log('end');
+      }
+    })
+  }
+}
+
+
 //
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
@@ -36,7 +70,6 @@ handlers.helloExtRest = function (args) {
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
 //		consumeResult2: resConsume2,
-		jq: $(this),
 		dummy: ""
 		};
 }
