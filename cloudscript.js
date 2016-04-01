@@ -70,7 +70,7 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	if(bGetLock) {
-		__user_lock_release(lockItemId, lockItem.RemainingUses);
+		__user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 	}
 
 	return {
