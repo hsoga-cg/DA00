@@ -51,20 +51,26 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var	lockItemId = __user_lock_init();
-	if(lockItemId != null) {
-		msg0 += " (init lock object success. using " + lockItemId + ")";
+	var	lockItem = __user_lock_init();
+	if(lockItem != null) {
+		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
 	}
 
-	var	bGetLock = __user_lock_get(lockItemId);
-	msg0 += " (lock acquired? " + bGetLock + ")";
+	var	bGetLock = false;
+	if(lockItem.RemainingUses == 1) {
+		bGetLock = __user_lock_get(lockItem.ItemInstanceId);
+		msg0 += " (lock acquired)";
+	} else {
+		bGetLock = true;
+		msg0 += " (lock init'ed: uses: " + lockItem.RemainingUses + ")";
+	}
 
 //	// test calling API on another service
 //	var restres = http.request("http://nicovideo.jp/");
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	if(bGetLock) {
-		__user_lock_release(lockItemId);
+		__user_lock_release(lockItemId, lockItem.RemainingUses);
 	}
 
 	return {
@@ -110,7 +116,7 @@ function __user_lock_init() {
 	};
 */
 	if(resGrant.ItemGrantResults[0].Result == true) {
-		return	resGrant.ItemGrantResults[0].ItemInstanceId;
+		return	resGrant.ItemGrantResults[0];
 	}
 
 	return	null;
@@ -132,12 +138,12 @@ function __user_lock_get(lockItemId) {
 	}
 }
 
-function __user_lock_release(lockItemId) {
+function __user_lock_release(lockItemId, remaininguses) {
 	//
 	var resModify = server.ModifyItemUses({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: lockItemId,
-		UsesToAdd: 1
+		UsesToAdd: (remaininguses == 0 ? 1 : 1 - remaininguses)
 	});
 	if(resModify.RemainingUses == 1) {
 		// success
