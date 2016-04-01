@@ -58,12 +58,12 @@ handlers.helloExtRest = function (args) {
 
 	var	bGetLock = __user_lock_get(lockItemId);
 
-	// test calling API on another service
-	var restres = http.request("http://nicovideo.jp/");
-	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
+//	// test calling API on another service
+//	var restres = http.request("http://nicovideo.jp/");
+//	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	if(bGetLock) {
-		__user_lock_release(lockItemId);
+//		__user_lock_release(lockItemId);
 	}
 
 	return {
