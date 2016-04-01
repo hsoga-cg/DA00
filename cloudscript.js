@@ -69,13 +69,15 @@ handlers.helloExtRest = function (args) {
 //	var restres = http.request("http://nicovideo.jp/");
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
+	var	resrel = null;
 	if(bGetLock) {
-		__user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
+		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 	}
 
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
+		releaseResult: resrel,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
@@ -151,7 +153,7 @@ function __user_lock_release(lockItemId, remaininguses) {
 		// need to adjust to 1, but possibly it is program bug.
 		// log it and maybe better to do manual adjustment
 	}
-	return;
+	return	resModify;
 }
 
 // ----8< ----
