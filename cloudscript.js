@@ -53,7 +53,7 @@ handlers.helloExtRest = function (args) {
 
 	var	lockItemId = __user_lock_init();
 	if(lockItemId != null) {
-		msg0 += " (success. using " + lockItemId + " as lock object)";
+		msg0 += " (init lock object success. using " + lockItemId + ")";
 	}
 
 	var	bGetLock = __user_lock_get(lockItemId);
@@ -124,8 +124,9 @@ function __user_lock_get(lockItemId) {
 		ConsumeCount: 1
 	});
 	if(resConsume1.RemainingUses == 0) {
+return	resConsume1.RemainingUses;
 		// success
-		return	true;
+//		return	true;
 	} else {
 		// failed to get user lock
 		return	false;
