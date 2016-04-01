@@ -64,7 +64,7 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	if(bGetLock) {
-//		__user_lock_release(lockItemId);
+		__user_lock_release(lockItemId);
 	}
 
 	return {
@@ -127,9 +127,8 @@ function __user_lock_get(lockItemId) {
 		// success
 		return	true;
 	} else {
-return	resConsume1.RemainingUses;
 		// failed to get user lock
-//		return	false;
+		return	false;
 	}
 }
 
