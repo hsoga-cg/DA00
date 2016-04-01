@@ -124,12 +124,12 @@ function __user_lock_get(lockItemId) {
 		ConsumeCount: 1
 	});
 	if(resConsume1.RemainingUses == 0) {
-return	resConsume1.RemainingUses;
 		// success
-//		return	true;
+		return	true;
 	} else {
+return	resConsume1.RemainingUses;
 		// failed to get user lock
-		return	false;
+//		return	false;
 	}
 }
 
