@@ -1,6 +1,8 @@
 
 // ----8< ----
 
+var	__g_testglobal;
+
 /*
 	var updateUserDataResult = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
@@ -57,8 +59,8 @@ handlers.helloExtRest = function (args) {
 	var	bGetLock = __user_lock_get(lockItemId);
 
 	// test calling API on another service
-	var restres = http.request("http://www.playonline.com");
-	msg0 += ("\n\n restres -> " + restres.substring(0, 100) + " ::::");
+	var restres = http.request("http://nicovideo.jp/");
+	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	if(bGetLock) {
 		__user_lock_release(lockItemId);
@@ -66,6 +68,7 @@ handlers.helloExtRest = function (args) {
 
 	return {
 		message: msg0,
+		testglobal: __g_testglobal,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
