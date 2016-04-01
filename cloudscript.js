@@ -140,12 +140,15 @@ function __user_lock_get(lockItemId) {
 	}
 }
 
-function __user_lock_release(lockItemId, remaininguses) {
+function __user_lock_release(lockItemId, prevremaininguses) {
+	var	toadd = 1;
+	if(prevremaininguses > 1)
+		toadd = 1 - prevremaininguses;
 	//
 	var resModify = server.ModifyItemUses({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: lockItemId,
-		UsesToAdd: (remaininguses == 0 ? 1 : 1 - remaininguses)
+		UsesToAdd: toadd
 	});
 	if(resModify.RemainingUses == 1) {
 		// success
