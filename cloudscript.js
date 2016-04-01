@@ -11,6 +11,8 @@
 
  */
 
+xxxx	// test syntax error
+
 /*
 var __fakeAsync = function (func, cb) {
   setTimeout(func(cb), 0);
