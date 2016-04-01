@@ -57,6 +57,7 @@ handlers.helloExtRest = function (args) {
 	}
 
 	var	bGetLock = __user_lock_get(lockItemId);
+	msg0 += " (lock acquired? " + bGetLock + ")";
 
 //	// test calling API on another service
 //	var restres = http.request("http://nicovideo.jp/");
