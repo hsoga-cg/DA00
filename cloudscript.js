@@ -11,9 +11,6 @@
 
  */
 
-xxxx	// test syntax error
-
-/*
 var __fakeAsync = function (func, cb) {
   setTimeout(func(cb), 0);
 }
@@ -74,12 +71,6 @@ handlers.helloExtRest = function (args) {
 //		consumeResult: resConsume1,
 //		consumeResult2: resConsume2,
 		dummy: ""
-		};
-}
-*/
-handlers.helloExtRest = function (args) {
-	return {
-		message: "xxxx"
 		};
 }
 
