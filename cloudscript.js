@@ -56,7 +56,8 @@ handlers.helloExtRest = function (args) {
 		PlayFabId: currentPlayerId
 	});
 	for(var otemp in resGetInv.Inventory) {
-		stemp += "( " + otemp.ItemId;
+		stemp += "( " + otemp;
+		stemp += ", " + otemp.ItemId;
 		stemp += ", " + otemp.RemainingUses;
 		stemp += ") ";
 	}
