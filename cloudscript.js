@@ -51,8 +51,7 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var resGetInv = server.GetUserInventory({
-	});
+	var resGetInv = server.GetUserInventory();
 
 	var	lockItem = __user_lock_init();
 	if(lockItem != null) {
