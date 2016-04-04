@@ -52,20 +52,9 @@ handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var	lockItem = __user_lock_init_or_find();
+	var	lockItem = __user_lock_get(lockItem.ItemInstanceId);
 	if(lockItem != null) {
-		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
-	}
-
-	var	bGetLock = false;
-	if(lockItem.RemainingUses == 1) {
-		bGetLock = __user_lock_get(lockItem.ItemInstanceId);
-		msg0 += " (lock acquired)";
-	} else
-	if(lockItem.RemainingUses == 0) {
-		msg0 += " (failed to get lock)";
-	} else {	// TODO handle case RemainingUses > 1
-		msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
+		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
 	}
 
 //	// test calling API on another service
@@ -73,7 +62,7 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	var	resrel = null;
-	if(bGetLock) {
+	if(lockItem != null) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 		msg0 += " -> lock released.";
 	}
@@ -95,10 +84,7 @@ handlers.helloExtRest = function (args) {
 handlers.exchangeBillingTrxWithItem = function (args) {
 }
 
-// this should be done only once when an user created.
-// this gives an item into user's inventory if not yet and always gives use count 1.
 function __user_lock_init_or_find() {
-
 	// if there's already one allocated, reuse it
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
@@ -111,6 +97,7 @@ function __user_lock_init_or_find() {
 		}
 	}
 
+	// create new one
 	var resGrant = server.GrantItemsToUser({
 		CatalogVersion: "00",
 		PlayFabId: currentPlayerId,
@@ -145,6 +132,19 @@ function __user_lock_init_or_find() {
 }
 
 function __user_lock_get(lockItemId) {
+	//
+	var	lockItem = __user_lock_init_or_find();
+	if(lockItem == null)
+		return	false;
+	if(lockItem.RemainingUses == 0) {
+		return	false;
+		//msg0 += " (failed to get lock)";
+	} else
+	if(lockItem.RemainingUses != 1) {	// TODO handle case RemainingUses > 1
+		return	false;
+		//msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
+	}
+
 	//
 	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
