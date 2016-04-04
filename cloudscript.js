@@ -52,17 +52,6 @@ handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var resGetInv = server.GetUserInventory({
-		PlayFabId: currentPlayerId
-	});
-	for(var idx in resGetInv.Inventory) {
-		var	otemp = resGetInv.Inventory[idx];
-		stemp += "( " + otemp;
-		stemp += ", " + otemp.ItemId;
-		stemp += ", " + otemp.RemainingUses;
-		stemp += ") ";
-	}
-
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem != null) {
 		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
@@ -115,7 +104,8 @@ function __user_lock_init_or_find() {
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	for(var otemp in resGetInv.Inventory) {
+	for(var idx in resGetInv.Inventory) {
+		var	otemp = resGetInv.Inventory[idx];
 		if(otemp.ItemId == "__sys_userlock" &&
 			otemp.RemainingUses > 0) {
 			return	otemp;
