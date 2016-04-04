@@ -72,7 +72,6 @@ handlers.helloExtRest = function (args) {
 		releaseResult: resrel,
 		lockItem: lockItem,
 		resGetInv: resGetInv,	// XXX debug
-		lock_iiid: lock_iiid,	// XXX debug
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
