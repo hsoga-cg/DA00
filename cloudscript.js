@@ -50,12 +50,7 @@ handlers.helloExtRest = function (args) {
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	var lock_iiid = server.GetUserData({
-		PlayFabId: currentPlayerId,
-		Keys: [ "__sys_user_kock" ]
-	});
 
-/*
 	var	lockItem = __user_lock_get();
 	if(lockItem.LockAvailable) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
@@ -70,13 +65,12 @@ handlers.helloExtRest = function (args) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 		msg0 += " -> lock released.";
 	}
-*/
 
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
-//		releaseResult: resrel,
-//		lockItem: lockItem,
+		releaseResult: resrel,
+		lockItem: lockItem,
 		resGetInv: resGetInv,	// XXX debug
 		lock_iiid: lock_iiid,	// XXX debug
 //		grantResult: resGrant,
@@ -92,15 +86,26 @@ handlers.exchangeBillingTrxWithItem = function (args) {
 }
 
 function __user_lock_init_or_find() {
+	var lock_iiid = null;
+
 	// if there's already one allocated, reuse it
-	var resGetInv = server.GetUserInventory({
-		PlayFabId: currentPlayerId
+	var resGetUserData = server.GetUserData({
+		PlayFabId: currentPlayerId,
+		Keys: [ "__sys_userlock_iteminstanceid" ]
 	});
-	for(var idx in resGetInv.Inventory) {
-		var	otemp = resGetInv.Inventory[idx];
-		if(otemp.ItemId == "__sys_userlock" &&
-			otemp.RemainingUses > 0) {
-			return	otemp;
+	if(resGetUserData.Data.__sys_userlock_iteminstanceid.length > 0) {
+		lock_iiid = resGetUserData.Data.__sys_userlock_iteminstanceid;
+
+		// Remaining count should be 1
+		var resGetInv = server.GetUserInventory({
+			PlayFabId: currentPlayerId
+		});
+		for(var idx in resGetInv.Inventory) {
+			var	otemp = resGetInv.Inventory[idx];
+			if(otemp.ItemId == "__sys_userlock" &&
+				otemp.RemainingUses > 0) {
+				return	otemp;
+			}
 		}
 	}
 
@@ -131,6 +136,8 @@ function __user_lock_init_or_find() {
 		]
 	};
 */
+
+	// record lock ItemInstanceId in UserInternalData
 	if(resGrant.ItemGrantResults[0].Result == true) {
 		var lock_iteminstanceid = resGrant.ItemGrantResults[0].ItemInstanceId;
 		var updateUserDataResult = server.UpdateUserInternalData({
