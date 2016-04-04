@@ -158,16 +158,16 @@ function __user_lock_get() {
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem == null) {
 		return	{
-			LockAvailable: false
-			AddMsg: "failed to get lock.";
+			LockAvailable: false,
+			AddMsg: "failed to get lock."
 		};
 	} else
 	if(lockItem.RemainingUses == 0 ||
 		lockItem.RemainingUses > 1) {	// TODO handle case RemainingUses > 1
 		return	{
-			LockAvailable: false
+			LockAvailable: false,
 			AddMsg: "failed to get lock. (RemainingUses: "
-				+ lockItem.RemainingUses + ") ";
+				+ lockItem.RemainingUses + ") "
 		};
 	}
 	addmsg += " (get count: " + lockItem.RemainingUses + ") ";
