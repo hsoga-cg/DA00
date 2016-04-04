@@ -51,6 +51,10 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	var resGetInv = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem != null) {
 		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
@@ -82,6 +86,7 @@ handlers.helloExtRest = function (args) {
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
+		resGetInv: resGetInv,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
