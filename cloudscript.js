@@ -106,6 +106,8 @@ function __user_lock_init_or_find() {
 				return	otemp;
 			}
 		}
+
+		return	null;
 	}
 
 	// create new one
