@@ -169,11 +169,10 @@ function __user_lock_get() {
 	} else
 	if(lockItem.RemainingUses == 0 ||
 		lockItem.RemainingUses > 1) {	// TODO handle case RemainingUses > 1
-		return	{
-			LockAvailable: false,
-			AddMsg: "failed to get lock. (RemainingUses: "
-				+ lockItem.RemainingUses + ") "
-		};
+		lockItem.LockAvailable = false;
+		lockItem.AddMsg = "failed to get lock. (RemainingUses: "
+				+ lockItem.RemainingUses + ") ";
+		return	lockItem;
 	}
 	addmsg += " (get count: " + lockItem.RemainingUses + ") ";
 
