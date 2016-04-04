@@ -53,7 +53,7 @@ handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
 	var	lockItem = __user_lock_get();
-	if(lockItem != null) {
+	if(lockItem.LockAvailable) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
 	}
 
@@ -62,12 +62,10 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	var	resrel = null;
-/*
-	if(lockItem != null) {
+	if(lockItem.LockAvailable) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 		msg0 += " -> lock released.";
 	}
-*/
 
 	return {
 		message: msg0,
@@ -138,11 +136,11 @@ function __user_lock_get() {
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem == null ||
 		lockItem.RemainingUses == 0) {
-		return	lockItem;
+		return	{ LockAvailable: false };
 		//msg0 += " (failed to get lock)";
 	} else
 	if(lockItem.RemainingUses != 1) {	// TODO handle case RemainingUses > 1
-		return	null;
+		return	{ LockAvailable: false };
 		//msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
 	}
 
@@ -155,10 +153,11 @@ function __user_lock_get() {
 	if(resConsume1.RemainingUses == 0) {
 		// success
 		lockItem.RemainingUses = 0;
+		lockItem.LockAvailable: true;
 		return	lockItem;
 	} else {
 		// failed to get user lock
-		return	null;
+		return	{ LockAvailable: false };
 	}
 }
 
