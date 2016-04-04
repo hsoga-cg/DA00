@@ -55,7 +55,7 @@ handlers.helloExtRest = function (args) {
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	for(int idx in resGetInv.Inventory) {
+	for(var idx in resGetInv.Inventory) {
 		var	otemp = resGetInv.Inventory[idx];
 		stemp += "( " + otemp;
 		stemp += ", " + otemp.ItemId;
