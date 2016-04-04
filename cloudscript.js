@@ -136,14 +136,13 @@ function __user_lock_init_or_find() {
 function __user_lock_get() {
 	//
 	var	lockItem = __user_lock_init_or_find();
-	if(lockItem == null)
-		return	false;
-	if(lockItem.RemainingUses == 0) {
-		return	false;
+	if(lockItem == null ||
+		lockItem.RemainingUses == 0) {
+		return	lockItem;
 		//msg0 += " (failed to get lock)";
 	} else
 	if(lockItem.RemainingUses != 1) {	// TODO handle case RemainingUses > 1
-		return	false;
+		return	null;
 		//msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
 	}
 
@@ -155,10 +154,11 @@ function __user_lock_get() {
 	});
 	if(resConsume1.RemainingUses == 0) {
 		// success
-		return	true;
+		lockItem.RemainingUses = 0;
+		return	lockItem;
 	} else {
 		// failed to get user lock
-		return	false;
+		return	null;
 	}
 }
 
