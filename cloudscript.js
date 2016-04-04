@@ -103,6 +103,7 @@ function __user_lock_init_or_find() {
 			var	otemp = resGetInv.Inventory[idx];
 			if(otemp.ItemId == "__sys_userlock" &&
 				otemp.RemainingUses > 0) {
+				otemp.AddMsg = "(found in user inventory)";
 				return	otemp;
 			}
 		}
@@ -141,14 +142,16 @@ function __user_lock_init_or_find() {
 	// record lock ItemInstanceId in UserInternalData
 	if(resGrant.ItemGrantResults.length > 0
 		&& resGrant.ItemGrantResults[0].Result == true) {
-		var lock_iteminstanceid = resGrant.ItemGrantResults[0].ItemInstanceId;
+		var	oret = resGrant.ItemGrantResults[0];
+		var lock_iteminstanceid = oret.ItemInstanceId;
 		var updateUserDataResult = server.UpdateUserInternalData({
 			PlayFabId: currentPlayerId,
 			Data: {
 				__sys_userlock_iteminstanceid: lock_iteminstanceid
 			}
 		});
-		return	resGrant.ItemGrantResults[0];
+		oret.AddMsg = "returning newly created lock instance";
+		return	oret;
 	}
 
 	return	null;
