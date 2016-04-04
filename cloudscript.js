@@ -83,7 +83,6 @@ handlers.helloExtRest = function (args) {
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
-		resGetInv: resGetInv,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
