@@ -66,18 +66,12 @@ handlers.helloExtRest = function (args) {
 		msg0 += " -> lock released.";
 	}
 
-	var resGetUserData = server.GetUserInternalData({
-		PlayFabId: currentPlayerId,
-		Keys: [ "__sys_userlock_iteminstanceid" ]
-	});
-
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
 		resGetInv: resGetInv,	// XXX debug
-		resGetUserData: resGetUserData,	// XXX debug
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
@@ -114,7 +108,8 @@ function __user_lock_init_or_find() {
 			}
 		}
 
-		return	null;
+		// there's instance id in user data but that was not found in inventory.
+		// bug?
 	}
 
 	// create new one
