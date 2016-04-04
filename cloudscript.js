@@ -93,7 +93,7 @@ function __user_lock_init_or_find() {
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_userlock_iteminstanceid" ]
 	});
-	if(resGetUserData.Data.__sys_userlock_iteminstanceid.length > 0) {
+	if(resGetUserData.Data.__sys_userlock_iteminstanceid != undefined) {
 		lock_iiid = resGetUserData.Data.__sys_userlock_iteminstanceid;
 
 		// Remaining count should be 1
