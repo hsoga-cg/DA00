@@ -66,7 +66,7 @@ handlers.helloExtRest = function (args) {
 		msg0 += " -> lock released.";
 	}
 
-	var resGetUserData = server.GetUserData({
+	var resGetUserData = server.GetUserInternalData({
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_userlock_iteminstanceid" ]
 	});
@@ -94,7 +94,7 @@ function __user_lock_init_or_find() {
 	var lock_iiid = null;
 
 	// if there's already one allocated, reuse it
-	var resGetUserData = server.GetUserData({
+	var resGetUserData = server.GetUserInternalData({
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_userlock_iteminstanceid" ]
 	});
