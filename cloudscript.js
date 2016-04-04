@@ -55,6 +55,7 @@ handlers.helloExtRest = function (args) {
 		Keys: [ "__sys_user_kock" ]
 	});
 
+/*
 	var	lockItem = __user_lock_get();
 	if(lockItem.LockAvailable) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
@@ -65,7 +66,6 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	var	resrel = null;
-/*
 	if(lockItem.LockAvailable) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 		msg0 += " -> lock released.";
@@ -75,8 +75,8 @@ handlers.helloExtRest = function (args) {
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
-		releaseResult: resrel,
-		lockItem: lockItem,
+//		releaseResult: resrel,
+//		lockItem: lockItem,
 		resGetInv: resGetInv,	// XXX debug
 		lock_iiid: lock_iiid,	// XXX debug
 //		grantResult: resGrant,
