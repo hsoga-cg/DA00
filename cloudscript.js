@@ -52,7 +52,7 @@ handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var	lockItem = __user_lock_get(lockItem.ItemInstanceId);
+	var	lockItem = __user_lock_get();
 	if(lockItem != null) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
 	}
@@ -131,7 +131,7 @@ function __user_lock_init_or_find() {
 	return	null;
 }
 
-function __user_lock_get(lockItemId) {
+function __user_lock_get() {
 	//
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem == null)
@@ -148,7 +148,7 @@ function __user_lock_get(lockItemId) {
 	//
 	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
-		ItemInstanceId: lockItemId,
+		ItemInstanceId: lockItem.lockItemId,
 		ConsumeCount: 1
 	});
 	if(resConsume1.RemainingUses == 0) {
