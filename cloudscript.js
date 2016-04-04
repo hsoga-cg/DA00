@@ -49,9 +49,9 @@ handlers.helloAsyncTest = function () {
 
 //
 handlers.helloExtRest = function (args) {
+	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var	stemp = "";
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
@@ -97,7 +97,7 @@ handlers.helloExtRest = function (args) {
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
 //		consumeResult2: resConsume2,
-		dummy: ""
+		dummy: stemp
 		};
 }
 
