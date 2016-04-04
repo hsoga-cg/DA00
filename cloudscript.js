@@ -51,6 +51,9 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	var resGetInv = server.GetUserInventory({
+	});
+
 	var	lockItem = __user_lock_init();
 	if(lockItem != null) {
 		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
@@ -72,12 +75,14 @@ handlers.helloExtRest = function (args) {
 	var	resrel = null;
 	if(bGetLock) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
+		msg0 += " -> lock released.";
 	}
 
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
+		getInvResult: resGetInv,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
@@ -90,6 +95,8 @@ handlers.helloExtRest = function (args) {
 handlers.exchangeBillingTrxWithItem = function (args) {
 }
 
+// this should be done only once when an user created.
+// this gives an item into user's inventory if not yet and always gives use count 1.
 function __user_lock_init() {
 	var resGrant = server.GrantItemsToUser({
 		CatalogVersion: "00",
