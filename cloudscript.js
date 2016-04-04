@@ -134,17 +134,19 @@ function __user_lock_init_or_find() {
 }
 
 function __user_lock_get() {
+	var	addmsg = "";
 	//
 	var	lockItem = __user_lock_init_or_find();
-	if(lockItem == null ||
-		lockItem.RemainingUses == 0) {
+	if(lockItem == null) {
 		return	{ LockAvailable: false };
 		//msg0 += " (failed to get lock)";
 	} else
-	if(lockItem.RemainingUses != 1) {	// TODO handle case RemainingUses > 1
+	if(lockItem.RemainingUses == 0 ||
+		lockItem.RemainingUses > 1) {	// TODO handle case RemainingUses > 1
 		return	{ LockAvailable: false };
 		//msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
 	}
+	addmsg += " (get count: " + lockItem.RemainingUses + ") ";
 
 	//
 	var resConsume1 = server.ConsumeItem({
@@ -156,6 +158,7 @@ function __user_lock_get() {
 		// success
 		lockItem.RemainingUses = 0;
 		lockItem.LockAvailable = true;
+		lockItem.AddMsg = addmsg;
 		return	lockItem;
 	} else {
 		// failed to get user lock
