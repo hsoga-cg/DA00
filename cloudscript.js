@@ -51,9 +51,15 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	var	stemp = "";
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
+	for(var otemp in resGetInv.Inventory) {
+		stemp += "( " + otemp.ItemId;
+		stemp += ", " + otemp.RemainingUses;
+		stemp += ") ";
+	}
 
 	var	lockItem = __user_lock_init_or_find();
 	if(lockItem != null) {
