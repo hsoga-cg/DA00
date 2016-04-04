@@ -51,11 +51,7 @@ handlers.helloAsyncTest = function () {
 handlers.helloExtRest = function (args) {
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	var resGetInv = server.GetUserInventory({
-		PlayFabId: currentPlayerId
-	});
-
-	var	lockItem = __user_lock_init();
+	var	lockItem = __user_lock_init_or_find();
 	if(lockItem != null) {
 		msg0 += " (init lock object success. using " + lockItem.ItemInstanceId + ")";
 	}
@@ -64,9 +60,11 @@ handlers.helloExtRest = function (args) {
 	if(lockItem.RemainingUses == 1) {
 		bGetLock = __user_lock_get(lockItem.ItemInstanceId);
 		msg0 += " (lock acquired)";
-	} else {
-		bGetLock = true;
-		msg0 += " (lock init'ed: uses: " + lockItem.RemainingUses + ")";
+	} else
+	if(lockItem.RemainingUses == 0) {
+		msg0 += " (failed to get lock)";
+	} else {	// TODO handle case RemainingUses > 1
+		msg0 += " (error lock state: uses: " + lockItem.RemainingUses + ")";
 	}
 
 //	// test calling API on another service
@@ -83,7 +81,7 @@ handlers.helloExtRest = function (args) {
 		message: msg0,
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
-		getInvResult: resGetInv,
+		lockItem: lockItem,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
@@ -98,7 +96,19 @@ handlers.exchangeBillingTrxWithItem = function (args) {
 
 // this should be done only once when an user created.
 // this gives an item into user's inventory if not yet and always gives use count 1.
-function __user_lock_init() {
+function __user_lock_init_or_find() {
+
+	// if there's already one allocated, reuse it
+	var resGetInv = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+	for(var otemp in resGetInv.Inventory) {
+		if(otemp.ItemId == "__sys_userlock" &&
+			otemp.RemainingUses > 0) {
+			return	otemp;
+		}
+	}
+
 	var resGrant = server.GrantItemsToUser({
 		CatalogVersion: "00",
 		PlayFabId: currentPlayerId,
