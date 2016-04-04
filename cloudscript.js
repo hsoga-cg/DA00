@@ -66,12 +66,18 @@ handlers.helloExtRest = function (args) {
 		msg0 += " -> lock released.";
 	}
 
+	var resGetUserData = server.GetUserData({
+		PlayFabId: currentPlayerId,
+		Keys: [ "__sys_userlock_iteminstanceid" ]
+	});
+
 	return {
 		message: msg0,
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
 		resGetInv: resGetInv,	// XXX debug
+		resGetUserData: resGetUserData,	// XXX debug
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
