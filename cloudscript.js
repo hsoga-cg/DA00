@@ -61,12 +61,10 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	var	resrel = null;
-/*
 	if(lockItem.LockAvailable) {
 		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
 		msg0 += " -> lock released.";
 	}
-*/
 
 	return {
 		message: msg0,
