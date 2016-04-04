@@ -148,7 +148,7 @@ function __user_lock_get() {
 	//
 	var resConsume1 = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
-		ItemInstanceId: lockItem.lockItemId,
+		ItemInstanceId: lockItem.ItemInstanceId,
 		ConsumeCount: 1
 	});
 	if(resConsume1.RemainingUses == 0) {
