@@ -153,7 +153,7 @@ function __user_lock_get() {
 	if(resConsume1.RemainingUses == 0) {
 		// success
 		lockItem.RemainingUses = 0;
-		lockItem.LockAvailable: true;
+		lockItem.LockAvailable = true;
 		return	lockItem;
 	} else {
 		// failed to get user lock
