@@ -4,12 +4,6 @@
 var	__g_testglobal;
 
 /*
-	var updateUserDataResult = server.UpdateUserInternalData({
-		PlayFabId: currentPlayerId,
-		Data: {
-			test: "test-data DATA"
-		}
-	});
 
  */
 
@@ -52,8 +46,13 @@ handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	// XXX debug
 	var resGetInv = server.GetUserInventory({
 		PlayFabId: currentPlayerId
+	});
+	var lock_iiid = server.GetUserData({
+		PlayFabId: currentPlayerId,
+		Keys: [ "__sys_user_kock" ]
 	});
 
 	var	lockItem = __user_lock_get();
@@ -78,7 +77,8 @@ handlers.helloExtRest = function (args) {
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
-		resGetInv: resGetInv,
+		resGetInv: resGetInv,	// XXX debug
+		lock_iiid: lock_iiid,	// XXX debug
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
@@ -132,7 +132,14 @@ function __user_lock_init_or_find() {
 	};
 */
 	if(resGrant.ItemGrantResults[0].Result == true) {
-		return	resGrant.ItemGrantResults[0];
+		var lock_iteminstanceid = resGrant.ItemGrantResults[0].ItemInstanceId;
+		var updateUserDataResult = server.UpdateUserInternalData({
+			PlayFabId: currentPlayerId,
+			Data: {
+				__sys_userlock_iteminstanceid: lock_iteminstanceid
+			}
+		});
+		return	lock_iteminstanceid;
 	}
 
 	return	null;
