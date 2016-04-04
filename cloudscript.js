@@ -111,7 +111,11 @@ function __user_lock_init_or_find() {
 		}
 
 		// there's instance id in user data but that was not found in inventory.
-		// bug?
+		// -> another thread has the lock
+		return	{
+			RemainingUses: 0,
+			AddMsg: "Lock not available"
+			};
 	}
 
 	// create new one
