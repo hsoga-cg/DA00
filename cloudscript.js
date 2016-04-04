@@ -52,6 +52,10 @@ handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
+	var resGetInv = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+
 	var	lockItem = __user_lock_get();
 	if(lockItem.LockAvailable) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
@@ -74,6 +78,7 @@ handlers.helloExtRest = function (args) {
 		testglobal: __g_testglobal,
 		releaseResult: resrel,
 		lockItem: lockItem,
+		resGetInv: resGetInv,
 //		grantResult: resGrant,
 //		modifyResult: resModify,
 //		consumeResult: resConsume1,
