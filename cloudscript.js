@@ -7,7 +7,9 @@ handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	return	res;
+	if(res.code != 200)
+		return	{};
+	return	res.Results;
 }
 
 
