@@ -9,7 +9,7 @@ handlers.GetPurchasedItemList = function (args) {
 	});
 	if(res.code != 200)
 		return	{};
-	return	res.Results;
+	return	res;
 }
 
 
