@@ -30,7 +30,7 @@ handlers.ExchangeTransactionWithItem = function (args) {
 }
 
 handlers.ConsumeItem = function (args) {
-	var resConsume1 = server.ConsumeItem({
+	var res = server.ConsumeItem({
 		PlayFabId: currentPlayerId,
 		ItemInstanceId: args.ItemInstanceId,
 		ConsumeCount: 1
