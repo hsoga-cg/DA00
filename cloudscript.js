@@ -26,6 +26,17 @@ handlers.ExchangeTransactionWithItem = function (args) {
 	});
 	if(res.code != 200)
 		return	res;	// TODO error handling
+	return	res.data.Results;
+}
+
+handlers.ConsumeItem = function (args) {
+	var resConsume1 = server.ConsumeItem({
+		PlayFabId: currentPlayerId,
+		ItemInstanceId: args.ItemInstanceId,
+		ConsumeCount: 1
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
 	return	res;
 }
 
