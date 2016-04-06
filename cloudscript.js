@@ -8,7 +8,24 @@ handlers.GetPurchasedItemList = function (args) {
 		PlayFabId: currentPlayerId
 	});
 	if(res.code != 200)
-		return	{};
+		return	res;	// TODO error handling
+	return	res.data.Results;
+}
+
+handlers.ExchangeTransactionWithItem = function (args) {
+	var	catalogver = "00";
+	var	itemid = "i_01";
+
+	// TODO resolve catlogver and itemid by transaction_id
+
+	var res = server.GrantItemsToUser({
+		CatalogVersion: catalogver,
+		PlayFabId: currentPlayerId,
+		Annotation: "ExchangeTransactionWithItem",
+		ItemIds: [ itemid ]
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
 	return	res;
 }
 
