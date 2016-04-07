@@ -3,6 +3,13 @@
 
 // APIs for demo
 
+handlers.GetLoginlessUserId = function (args) {
+	// TODO generate unique id
+	var	xc_userid = "514f34bcb0fb22249af4f79a6b3aabd0";
+
+	return	{ xc_userid: xc_userid };
+}
+
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
@@ -16,6 +23,15 @@ handlers.ExchangeTransactionWithItem = function (args) {
 	var	catalogver = "00";
 	var	itemid = "i_01";
 
+	// TODO consume transaction_id and giving item must be in on transaction.
+	// or consuming transaction_id success only once and only one thread that
+	// has the successful result must be possible to give an item.
+
+//	var	lockItem = __user_lock_get();
+//	if(!lockItem.LockAvailable) {
+//		return	{ code: 500 };
+//	}
+
 	// TODO resolve catlogver and itemid by transaction_id
 
 	var res = server.GrantItemsToUser({
@@ -24,6 +40,10 @@ handlers.ExchangeTransactionWithItem = function (args) {
 		Annotation: "ExchangeTransactionWithItem",
 		ItemIds: [ itemid ]
 	});
+
+//	var	resrel = __user_lock_release(
+//		lockItem.ItemInstanceId, lockItem.RemainingUses);
+
 	if(res.code != 200)
 		return	res;	// TODO error handling
 	return	res.data.Results;
@@ -41,13 +61,14 @@ handlers.ConsumeItem = function (args) {
 }
 
 handlers.LotDailyReward = function (args) {
+
+	// TODO limit to only once per a day
+
 	var	catalogver = "00";
 	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
 
 	var	itemid = possibleitemids[
 		Math.floor(Math.random() * possibleitemids.length)];
-
-	// TODO limit to only once per a day
 
 	var res = server.GrantItemsToUser({
 		CatalogVersion: catalogver,
