@@ -51,7 +51,7 @@ handlers.LotDailyReward = function (args) {
 	var res = server.GrantItemsToUser({
 		CatalogVersion: catalogver,
 		PlayFabId: currentPlayerId,
-		Annotation: "ExchangeTransactionWithItem",
+		Annotation: "LotDailyReward",
 		ItemIds: [ itemid ]
 	});
 	if(res.code != 200)
