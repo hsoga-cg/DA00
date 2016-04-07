@@ -37,7 +37,25 @@ handlers.ConsumeItem = function (args) {
 	});
 	if(res.code != 200)
 		return	res;	// TODO error handling
-	return	res;
+	return	res.data.Results;
+}
+
+handlers.LotDailyReward = function (args) {
+	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
+
+	var	itemid = possibleitemids[Math.random() * possibleitemids.length];
+
+	// TODO limit to only once per a day
+
+	var res = server.GrantItemsToUser({
+		CatalogVersion: catalogver,
+		PlayFabId: currentPlayerId,
+		Annotation: "ExchangeTransactionWithItem",
+		ItemIds: [ itemid ]
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
+	return	res.data.Results;
 }
 
 
