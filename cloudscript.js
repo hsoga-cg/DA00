@@ -42,12 +42,10 @@ handlers.ConsumeItem = function (args) {
 
 handlers.LotDailyReward = function (args) {
 	var	catalogver = "00";
-/*
 	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
 
-	var	itemid = possibleitemids[Math.random() * possibleitemids.length];
-*/
-	var	itemid = "i_02";
+	var	itemid = possibleitemids[
+		Math.floor(Math.random() * possibleitemids.length)];
 
 	// TODO limit to only once per a day
 
