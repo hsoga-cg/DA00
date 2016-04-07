@@ -41,6 +41,7 @@ handlers.ConsumeItem = function (args) {
 }
 
 handlers.LotDailyReward = function (args) {
+	var	catalogver = "00";
 	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
 
 	var	itemid = possibleitemids[Math.random() * possibleitemids.length];
