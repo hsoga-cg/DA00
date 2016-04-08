@@ -9,7 +9,7 @@ handlers.GetNews = function (args) {
 	});
 	if(res.code != 200)
 		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 // this is not possible because we need a SessionTicket to run cloud script.
