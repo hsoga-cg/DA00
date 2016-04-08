@@ -3,12 +3,22 @@
 
 // APIs for demo
 
-handlers.GetLoginlessUserId = function (args) {
-	// TODO generate unique id
-	var	xc_userid = "514f34bcb0fb22249af4f79a6b3aabd0";
-
-	return	{ xc_userid: xc_userid };
+handlers.GetNews = function (args) {
+	var res = server.GetTitleNews({
+		Count: 10
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
+	return	res.data.Results;
 }
+
+// this is not possible because we need a SessionTicket to run cloud script.
+//handlers.GetLoginlessUserId = function (args) {
+//	// TODO generate unique id
+//	var	xc_userid = "514f34bcb0fb22249af4f79a6b3aabd0";
+//
+//	return	{ xc_userid: xc_userid };
+//}
 
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
