@@ -95,6 +95,9 @@ handlers.LotDailyReward = function (args) {
 	var	lastdt = resGetUserData.Data.__sys_datetime_lastlotdailyreward;
 	var	epochdt = (new Date/1E3|0);
 	if(lastdt != undefined && ((lastdt + limitsecond) > epochdt)) {
+		if(lockItem.LockAvailable) {
+			var	resrel = __user_lock_release(lockItem);
+		}
 		return	{	code: 500, msg: "reward not yet available, try later."	};
 	}
 
