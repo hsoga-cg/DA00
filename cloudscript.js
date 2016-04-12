@@ -9,7 +9,7 @@ handlers.GetNews = function (args) {
 	});
 	if(res.code != 200)
 		return	res;	// TODO error handling
-	return	res;
+	return	res.data.Results;
 }
 
 // this is not possible because we need a SessionTicket to run cloud script.
@@ -19,6 +19,15 @@ handlers.GetNews = function (args) {
 //
 //	return	{ xc_userid: xc_userid };
 //}
+
+handlers.LoginWithGeneratedId = function (args) {
+	var res = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
+	return	res.data.Results;
+}
 
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
@@ -51,8 +60,7 @@ handlers.ExchangeTransactionWithItem = function (args) {
 		ItemIds: [ itemid ]
 	});
 
-//	var	resrel = __user_lock_release(
-//		lockItem.ItemInstanceId, lockItem.RemainingUses);
+//	var	resrel = __user_lock_release(lockItem);
 
 	if(res.code != 200)
 		return	res;	// TODO error handling
@@ -72,7 +80,34 @@ handlers.ConsumeItem = function (args) {
 
 handlers.LotDailyReward = function (args) {
 
-	// TODO limit to only once per a day
+	// limit to only once per a day
+	var	limitsecond = 60;	//(60 * 60 * 24);
+
+	var	lockItem = __user_lock_get();
+	if(!(lockItem.LockAvailable)) {
+		return	{	code: 500, msg: "failed to get user lock."	};
+	}
+
+	var resGetUserData = server.GetUserInternalData({
+		PlayFabId: currentPlayerId,
+		Keys: [ "__sys_datetime_lastlotdailyreward" ]
+	});
+	var	lastdt = resGetUserData.Data.__sys_datetime_lastlotdailyreward;
+	var	epochdt = (new Date/1E3|0);
+	if(lastdt != undefined && ((lastdt + limitsecond) > epochdt)) {
+		return	{	code: 500, msg: "reward not yet available, try later."	};
+	}
+
+	var updateUserDataResult = server.UpdateUserInternalData({
+		PlayFabId: currentPlayerId,
+		Data: {
+			__sys_datetime_lastlotdailyreward: epochdt
+		}
+	});
+
+	if(lockItem.LockAvailable) {
+		var	resrel = __user_lock_release(lockItem);
+	}
 
 	var	catalogver = "00";
 	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
@@ -117,7 +152,7 @@ handlers.helloExtRest = function (args) {
 
 	var	resrel = null;
 	if(lockItem.LockAvailable) {
-		resrel = __user_lock_release(lockItem.ItemInstanceId, lockItem.RemainingUses);
+		resrel = __user_lock_release(lockItem);
 		msg0 += " -> lock released.";
 	}
 
@@ -254,7 +289,10 @@ function __user_lock_get() {
 	}
 }
 
-function __user_lock_release(lockItemId, prevremaininguses) {
+function __user_lock_release(lockItem) {
+	var	lockItemId = lockItem;
+	var	prevremaininguses = lockItem.RemainingUses;
+
 	var	toadd = 1;
 	if(prevremaininguses > 1)
 		toadd = 1 - prevremaininguses;
