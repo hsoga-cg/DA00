@@ -92,14 +92,16 @@ handlers.LotDailyReward = function (args) {
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_datetime_lastlotdailyreward" ]
 	});
-	var	lastdt = parseInt(
-		resGetUserData.Data["__sys_datetime_lastlotdailyreward"], 10);
+	var	lastdtobj = resGetUserData.Data["__sys_datetime_lastlotdailyreward"];
 	var	currdt = (new Date/1E3|0);
-	if(lastdt != undefined && ((lastdt + limitsecond) > currdt)) {
-		if(lockItem.LockAvailable) {
-			var	resrel = __user_lock_release(lockItem);
+	if(lastdtobj != undefined) {
+		var	lastdt = parseInt(lastdtobj.Value, 10);
+		if((lastdt + limitsecond) > currdt) {
+			if(lockItem.LockAvailable) {
+				var	resrel = __user_lock_release(lockItem);
+			}
+			return	{	code: 500, msg: "reward not yet available, try later."	};
 		}
-		return	{	code: 500, msg: "reward not yet available, try later."	};
 	}
 
 	var updateUserDataResult = server.UpdateUserInternalData({
@@ -190,6 +192,8 @@ function __user_lock_init_or_find() {
 	});
 	var	lock_iiid = resGetUserData.Data["__sys_userlock_iteminstanceid"];
 	if(lock_iiid != undefined) {
+		//lock_iiid.Value
+
 		// Remaining count should be 1
 		var resGetInv = server.GetUserInventory({
 			PlayFabId: currentPlayerId
