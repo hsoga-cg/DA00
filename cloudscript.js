@@ -109,6 +109,8 @@ handlers.LotDailyReward = function (args) {
 		var	resrel = __user_lock_release(lockItem);
 	}
 
+	// lot an item and give it
+
 	var	catalogver = "00";
 	var	possibleitemids = [ "i_01", "i_02", "i_03", ];
 
@@ -291,7 +293,7 @@ function __user_lock_get() {
 
 function __user_lock_release(lockItem) {
 	var	lockItemId = lockItem;
-	var	prevremaininguses = lockItem.RemainingUses;
+	var	prevremaininguses = 0;//lockItem.RemainingUses;
 
 	var	toadd = 1;
 	if(prevremaininguses > 1)
