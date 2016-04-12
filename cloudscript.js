@@ -292,8 +292,8 @@ function __user_lock_get() {
 }
 
 function __user_lock_release(lockItem) {
-	var	lockItemId = lockItem;
-	var	prevremaininguses = 0;//lockItem.RemainingUses;
+	var	lockItemId = lockItem.ItemInstanceId;
+	var	prevremaininguses = lockItem.RemainingUses;
 
 	var	toadd = 1;
 	if(prevremaininguses > 1)
