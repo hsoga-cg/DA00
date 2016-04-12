@@ -94,8 +94,8 @@ handlers.LotDailyReward = function (args) {
 	});
 	var	lastdt = parseInt(
 		resGetUserData.Data["__sys_datetime_lastlotdailyreward"], 10);
-	var	epochdt = (new Date/1E3|0);
-	if(lastdt != undefined && ((lastdt + limitsecond) > epochdt)) {
+	var	currdt = (new Date/1E3|0);
+	if(lastdt != undefined && ((lastdt + limitsecond) > currdt)) {
 		if(lockItem.LockAvailable) {
 			var	resrel = __user_lock_release(lockItem);
 		}
@@ -105,7 +105,8 @@ handlers.LotDailyReward = function (args) {
 	var updateUserDataResult = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
 		Data: {
-			__sys_datetime_lastlotdailyreward: epochdt
+			__sys_datetime_lastlotdailyreward: currdt
+			, __debug: ("(X) " + lastdt + ", " + currdt + ", " + (lastdt + limitsecond))
 		}
 	});
 
