@@ -92,7 +92,8 @@ handlers.LotDailyReward = function (args) {
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_datetime_lastlotdailyreward" ]
 	});
-	var	lastdt = resGetUserData.Data.__sys_datetime_lastlotdailyreward;
+	var	lastdt = parseInt(
+		resGetUserData.Data["__sys_datetime_lastlotdailyreward"], 10);
 	var	epochdt = (new Date/1E3|0);
 	if(lastdt != undefined && ((lastdt + limitsecond) > epochdt)) {
 		if(lockItem.LockAvailable) {
@@ -180,16 +181,14 @@ handlers.exchangeBillingTrxWithItem = function (args) {
 }
 
 function __user_lock_init_or_find() {
-	var lock_iiid = null;
 
 	// if there's already one allocated, reuse it
 	var resGetUserData = server.GetUserInternalData({
 		PlayFabId: currentPlayerId,
 		Keys: [ "__sys_userlock_iteminstanceid" ]
 	});
-	if(resGetUserData.Data.__sys_userlock_iteminstanceid != undefined) {
-		lock_iiid = resGetUserData.Data.__sys_userlock_iteminstanceid;
-
+	var	lock_iiid = resGetUserData.Data["__sys_userlock_iteminstanceid"];
+	if(lock_iiid != undefined) {
 		// Remaining count should be 1
 		var resGetInv = server.GetUserInventory({
 			PlayFabId: currentPlayerId
