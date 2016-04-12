@@ -106,7 +106,7 @@ handlers.LotDailyReward = function (args) {
 		PlayFabId: currentPlayerId,
 		Data: {
 			__sys_datetime_lastlotdailyreward: currdt
-			, __debug: ("(X) " + lastdt + ", " + currdt + ", " + (lastdt + limitsecond))
+			, __debug: ("(X) " + resGetUserData.Data["__sys_datetime_lastlotdailyreward"] + " -> " + lastdt + ", " + currdt + ", " + (lastdt + limitsecond))
 		}
 	});
 
