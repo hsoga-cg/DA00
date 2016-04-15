@@ -1,0 +1,291 @@
+<html>
+
+<head>
+	<title>api demo</title>
+
+<!--
+	<link rel="stylesheet" href="/jquery-ui/jquery-ui.css" />
+-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="//cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
+<!--
+	<script src="/jquery-ui/jquery-ui.js"></script>
+-->
+
+<!-- items sprite 384 (32 *12) x 256 (32 *8) -->
+<style type="text/css">
+body {
+	font-family: sans-serif;
+}
+input.uitext {
+	padding: .3em;
+	margin: .3em;
+}
+input.ui-button {
+	padding: .3em;
+	margin: .3em;
+}
+.itemspane {
+	border: solid 1px lightgrey;
+	padding: 1em;
+}
+itemline {
+	font-size: .8em;
+}
+itemline.sysobj {
+	color: grey;
+}
+itemline a {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	overflow: hidden;
+	background: url(./items.png) 0 0;
+	text-indent: 100%;
+	white-space: nowrap;
+}
+itemline a.item1 { background-position: -96px 0; }
+itemline a.item2 { background-position: -128px 0; }
+itemline a.item3 { background-position: -64px 0; }
+itemline a.itemsys { background-position: -32px 192px; }
+.expl {
+	font-size: .6em;
+}
+.googleicon {
+	padding-left: 32px;
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuNvyMY98AAAQZSURBVFhH1VZ9TBNnHK6bH4txcWiWbRJntsiyJcuyJaOtFQn0etDK6Hcpk5VCo2RVUbFZVmay+0sJNBt+MBNgcSYzS6+VI9bJMJAWhYSETf8wW5Zo4kI2kvWugNKj1hb77g7fqpS3ctfIsj3J81ef93me9+PXVvK/wrRr9xsRs7qRMWAkrS76mdGWhhmtcprRlozTO3eEGF3pqUiN1gw6ibVwybPBpN2s5sKGaFwGaKxwSTJqRZTWYx3MPscmaJEbJp11mxm9sh8VIojlcpa2ag4DiWQFtBQOxq7DaLViEmksltrSQJjYuw5aL41IrcEQxuUJpFkOZHTKkTBBCCsQ/sSkoHF5HGWUyXC5IkVXFM897W1wD1N4+B23My+sKZpAGaXJVBTfYqo0rqnmA+8BgniOXwd8HeuY3dVK2oCdpssVsUdaMTvnQRtUnU+GLWCZ/D5TXeECPt/zUI7E/MPlJoYP5woKD4+PygruuN6fQ4Zzr5mxm0qgdEmAzs5VonbOIzmU35EcXA1Yz1Zut9LH4SopmK4zGaFsecDfZSK4nkkOrgI87517FUQMDwtEDLgXypYPqbFthenwNBM/rgdTDR+AiNP2DpQtHxIjBY2ZBeYZ3HAdSrJC3z7brW5lb4il7XTMAi34+3+pBVXgfmjjCSjJCk3bTFB5lAVi+VHbDAEtuBMYyj+LKpC4srkZSrIi1wLar9lvoAV3Alfzv/u3CxjbZ89AC65AEH0FyVDe8l2Bhz0OLbgrGH57P6pAXMAj1LSxORXQt7NHoAVXYAxbNIZ/Dr4M7L2VwDbgfgvKkOjrS60J/DKxNhsrPewwqkBNx6wZWnBfRACsSATz6HT4yOUCgPmN4EOvCSh77D9AmWgc+p59TdUSncsMxzgeOR/bAmUPkby65VRicA3o6pMBKWmeD+dZ6DUDXcCphzJR0H4V7c4M51nhYX+Hkse4d61ya1NA8yAd/CRlZFVUd/HTHVAqCNYTMRt2bHE4T2M7i54uvLe+C1WAp4y0xNWBPU0Wn+WpP8fEr8Rq41mKUB2LplDhZS3sjJu6uxHKF6Kpn9hQ5N81gSqQ5nbfrpsYZTvsCDW/S8A/JESIeMHc3yRVUvYvFf7qcV6HnekCqpa7iwpYT8bc82HZYO1vVHBHHs8MRlFOVqW2+z9O8u8E9XnxuS8A7vnrUTg3+6NECKyEUdlh+umgUU5aEihTsVR4HQA/eQ1oWtk/+KmAEUvDfOkAvs1nnUKZimVJT+1vrvO3F46dEDQMfP461lN3GWUqhFKvJVVGOb79bKT1RWiZG6yXDmqUPbVDUtKCDMqknLTOlVJ2qmbAXQgtng0ODRNv7rzQ0Ij3OkhuWsYwyv43RtVNcWHjxf6aKzhV360NOOuPjh5/BS75r0Mi+QdIdwa8p/8mUwAAAABJRU5ErkJggg==');
+	background-repeat: no-repeat;
+}
+</style>
+
+<script type="text/javascript">
+
+function run_authenticate() {
+	var	userid0 = $.cookie("xc_userid");
+	if(userid0 == undefined || userid0.length >= 0) {
+		userid0 = gen_safer_guid();
+	}
+
+//	userid0 = "514f34bcb0fb22249af4f79a6b3aabd0"
+	__inner_authenticate(userid0);
+}
+
+function __inner_authenticate(userid) {
+	var	apiurl = "https://DA00.playfabapi.com/Client/LoginWithCustomID";
+	var apidataobj = {
+		CustomID: userid,
+		TitleId: "DA00",
+		CreateAccount: true
+	};
+	if(userid != null && userid != undefined && userid.length > 0)
+		apidataobj.CustomID = userid;
+	__inner_call_rest(apiurl, false, apidataobj,
+		function(response) {
+			console.debug(response);
+			$("#tx_sesstick").val(response.data.SessionTicket);
+			$.cookie("xc_userid", userid);
+			$.cookie("sesstick", response.data.SessionTicket);
+		});
+}
+
+function authenticate_googleaccount(accesstoken) {
+	var	apiurl = "https://DA00.playfabapi.com/Client/LoginWithGoogleAccount";
+	var apidataobj = {
+		TitleId: "DA00",
+		AccessToken: accesstoken,
+		CreateAccount: false
+	};
+	__inner_call_rest(apiurl, false, apidataobj,
+		function(response) { console.debug(response); });
+}
+
+function linkgoogleaccount(accesstoken) {
+	var	apiurl = "https://DA00.playfabapi.com/Client/LinkGoogleAccount";
+	var apidataobj = {
+		AccessToken: accesstoken
+	};
+	__inner_call_rest(apiurl, true, apidataobj,
+		function(response) { console.debug(response); });
+}
+
+function unlinkgoogleaccount(accesstoken) {
+	var	apiurl = "https://DA00.playfabapi.com/Client/UnlinkGoogleAccount";
+	var apidataobj = {
+	};
+	__inner_call_rest(apiurl, true, apidataobj,
+		function(response) { console.debug(response); });
+}
+
+function run_cloudscript(apiname, cb_success, apiparams) {
+	var	apiurl = "https://DA00.playfablogic.com/1/prod/Client/RunCloudScript";
+	var apidataobj = {
+			ActionId: apiname,
+			Params: apiparams
+		};
+	__inner_call_rest(apiurl, true, apidataobj, cb_success);
+}
+
+function __inner_call_rest(apiurl, bsesstickauth, apidataobj, cb_success, params) {
+	var	orest = {
+		type: "POST",
+		url: apiurl,
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify(apidataobj),
+		dataType: "json",
+		success: cb_success,
+		error: function( error ) {
+			console.log( "ERROR:", error );
+		}
+	};
+	console.debug(orest);
+	if(bsesstickauth) {
+		orest.beforeSend = function (request) {
+			request.setRequestHeader(
+				"X-Authentication", $("#tx_sesstick").val());
+		};
+	}
+	$.ajax(orest);
+}
+
+function build_items_table(inventory) {
+	$("#d_itemslist").html("inventory items: <br/>");
+	for(var i in inventory) {
+		var	o0 = inventory[i];
+		show_item_line("#d_itemslist", o0);
+	}
+}
+function show_acquired_item(divid, itemobj) {
+	$(divid).html("you've got: <br/>");
+	show_item_line(divid, itemobj);
+}
+function show_item_line(divid, itemobj) {
+	var	bsysobj = (itemobj.ItemClass == "system")
+	var	elem = "<itemline" + (bsysobj ? " class='sysobj'" : "")
+		+ "><a class='item" + (bsysobj ? "sys" : itemobj.ItemId.slice(-1))
+		+ "'></a>"
+		+ "ItemId: " + itemobj.ItemId + ", "
+		+ "ItemInstanceId: " + itemobj.ItemInstanceId + ", "
+		+ "RemainingUse: " + itemobj.RemainingUses + ", "
+		+ (bsysobj ? "(system object)" : "") + "</itemline><br/>";
+	$(divid).append(elem);
+}
+
+function show_news(newsobj) {
+	newsobj = newsobj.data.Results.News[0];
+	alert(newsobj.Title + "\r\n"
+		+ newsobj.Timestamp + "\r\n"
+		+ newsobj.Body + "\r\n");
+}
+
+function init_page() {
+	$("#tx_sesstick").val($.cookie("sesstick"));
+
+	//
+	// http://localhost:10080/testapi.html#access_token=ya29..xQ...&token_type=Bearer&expires_in=3600&authuser=0&session_state=1acb...9f08&prompt=consent
+	var	mparams = params_to_map(location.hash.substring(1));
+	$("#gaccess_token").val(mparams["access_token"]);
+}
+
+/** Generate temporary userid string. As the id string will be used to
+ * identify the player until he/she log in with username + password, the id
+ * string should be unpredictable. Math.random() uses time for random seed thus 
+ * it is not suit the use.
+ */
+function gen_safer_guid() {	// not completely safe, "safer"
+	var	arand = new Uint32Array(5);
+	window.crypto.getRandomValues(arand);
+
+	var	sguid = "";
+	for(var i in arand) {
+		var	num = arand[i];
+		sguid += ("-" + num.toString(16));
+	}
+	sguid = sguid.substring(1);
+
+// if a number starts with 0, length will be shorter
+//	if(sguid.length != (8 * arand.length + (arand.length - 1))) {
+//		return	null;
+//	}
+
+	return	sguid;
+}
+
+function test() {
+	var	prom1 = new Promise(function(resolve, reject) {
+		if(true)	// success?
+			resolve("done.");
+		});
+
+	prom1.then(
+		function(result) {
+			console.debug("success (" + result + ")");
+		},
+		function(error) {
+		});
+}
+
+// parse url params and return as map
+function params_to_map(sparams) {
+	return sparams.split("&").map(
+		function(a) {
+			var b = {};
+			b[a.split("=")[0]] = a.split("=")[1];
+			return b
+		}
+	).reduce(
+		function (a, b) {
+			var key = Object.keys(b)[0];
+			a[key] = b[key];
+			return a;
+		}
+	);
+}
+
+</script>
+</head>
+
+<body onload="javascript:init_page();">
+<h2 style="margin-bottom: 0">Playfab API demo</h2>
+<span class="expl">please open browser console (F12) to confirm API results</span>
+
+<br /><br />
+Session ticket: <input type="text" class="uitext" id="tx_sesstick" value="" />
+<input type="button" class="ui-button" value="update session ticket (authenticate)" onclick="javascript:run_authenticate();" />
+<br />
+<a href="https://accounts.google.com/o/oauth2/auth?client_id=23369695482-unesrfh015n6q809keg1ru3nlf2ci3ad.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A10080%2Ftestapi.html&scope=openid&response_type=token" title="Authenticate with Google"><img class="googleicon" height="32px"/></a> <input class="uitext" id="gaccess_token" type="text">
+<input type="button" class="ui-button" value="authenticate g access token" onclick="authenticate_googleaccount($('#gaccess_token').val());">
+<input type="button" class="ui-button" value="link g account to current playfab id" onclick="linkgoogleaccount($('#gaccess_token').val());">
+<input type="button" class="ui-button" value="unlink g account" onclick="unlinkgoogleaccount($('#gaccess_token').val());">
+<br/><br/>
+
+<div class="itemspane">
+
+<div id="d_itemslist">items: </div>
+
+<input type="button" class="ui-button" value="get purchased item list" onclick="javascript:run_cloudscript('GetPurchasedItemList', function(response) { console.debug(response); build_items_table(response.data.Results.Inventory); });" />
+<br/>
+
+TrxId to exchange: <input type="text" class="uitext" id="tx_trxidtoexc" value="xxxxxxxx" />
+<input type="button" class="ui-button" value="exchange with item" onclick="javascript:run_cloudscript('ExchangeTransactionWithItem', function(response) { console.debug(response); }, { ItemId: $('#tx_trxidtoexc').val() });" />
+<br/>
+
+ItemInstanceId to consume: <input type="text" class="uitext" id="tx_consitemid" />
+<input type="button" class="ui-button" value="consume item" onclick="javascript:run_cloudscript('ConsumeItem', function(response) { console.debug(response); }, { ItemInstanceId: $('#tx_consitemid').val() });" />
+<br/>
+
+<input type="button" class="ui-button" value="get daily reward" onclick="javascript:run_cloudscript('LotDailyReward', function(response) { console.debug(response); show_acquired_item('#d_acquireditem', response.data.Results.ItemGrantResults[0]); });" /> ("once per day" not yet implemented)
+<div id="d_acquireditem">: </div>
+
+</div><!-- .itemspane -->
+
+<input type="button" class="ui-button" value="get news" onclick="javascript:run_cloudscript('GetNews', function(response) { console.debug(response); show_news(response); });" />
+
+
+<br/><br/>
+<input type="button" class="ui-button" value="test hello script" onclick="javascript:run_cloudscript("helloExtRest", function(response) { console.debug(response); });" />
+<input type="button" class="ui-button" value="test" onclick="javascript:test();" />
+
+</body>
+
+</html>
+
