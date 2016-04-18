@@ -30,8 +30,9 @@ handlers.LoginWithGeneratedId = function (args) {
 }
 
 handlers.GetPlayerBasicInfo = function (args) {
-	var res = server.GetUserInventory({
-		PlayFabId: currentPlayerId
+	var res = server.GetUserInternalData({
+//		PlayFabId: currentPlayerId
+		PlayFabId: "xxxx"
 	});
 
 	var updateUserDataResult = server.UpdateUserInternalData({
