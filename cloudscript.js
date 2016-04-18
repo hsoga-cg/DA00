@@ -29,6 +29,19 @@ handlers.LoginWithGeneratedId = function (args) {
 	return	res.data.Results;
 }
 
+handlers.GetPlayerBasicInfo = function (args) {
+	var res = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
+//	return	res.data.Results;
+	return	{
+		code: res.code,
+		playerName: res.data.Results.playerName
+	};
+}
+
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
@@ -108,7 +121,6 @@ handlers.LotDailyReward = function (args) {
 		PlayFabId: currentPlayerId,
 		Data: {
 			__sys_datetime_lastlotdailyreward: currdt
-			, __debug: ("(X) " + resGetUserData.Data["__sys_datetime_lastlotdailyreward"] + " -> " + lastdt + ", " + currdt + ", " + (lastdt + limitsecond))
 		}
 	});
 
@@ -129,6 +141,21 @@ handlers.LotDailyReward = function (args) {
 		PlayFabId: currentPlayerId,
 		Annotation: "LotDailyReward",
 		ItemIds: [ itemid ]
+	});
+	if(res.code != 200)
+		return	res;	// TODO error handling
+	return	res.data.Results;
+}
+
+// custom event log is not enabled for titles by default.
+// need to contact devrel@playfab.com
+handlers.LogEvent = function (args) {
+	var res = server.LogEvent({
+		PlayFabId: currentPlayerId,
+		EventName: args.EventName,
+		Body: {
+		},
+		ProfileSetEvent: true
 	});
 	if(res.code != 200)
 		return	res;	// TODO error handling
