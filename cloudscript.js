@@ -37,7 +37,7 @@ handlers.GetPlayerBasicInfo = function (args) {
 	var updateUserDataResult = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
 		Data: {
-			__debug: ("(X) " + res.code + " (" + (res.code == 200) ") ")
+			__debug: ("(X) " + res.code + " (" + (res.code == 200) + ") ")
 		}
 	});
 
