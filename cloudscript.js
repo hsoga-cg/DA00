@@ -33,6 +33,14 @@ handlers.GetPlayerBasicInfo = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
+
+	var updateUserDataResult = server.UpdateUserInternalData({
+		PlayFabId: currentPlayerId,
+		Data: {
+			__debug: ("(X) " + res.code + " (" + (res.code == 200) ") ")
+		}
+	});
+
 	if(res.code != 200)
 		return	res;	// TODO error handling
 //	return	res.data.Results;
