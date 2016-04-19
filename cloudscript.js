@@ -65,7 +65,11 @@ handlers.UpdatePlayerName = function (args) {
 	var res2 = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
 		Data: {
-			basic_data: res1
+			basic_data: {
+				player_name: "(undefined 0)",
+				player_level: 1,
+				player_exp: 0
+			}
 		}
 	});
 
