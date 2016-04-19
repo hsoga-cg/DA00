@@ -35,9 +35,9 @@ handlers.GetPlayerBasicInfo = function (args) {
 	var	data0 = res.Data.basic_data;
 	if(data0 == undefined) {
 		return	{
-			player_name = "(undefined)",
-			player_level = 1,
-			player_exp = 0
+			player_name: "(undefined)",
+			player_level: 1,
+			player_exp: 0
 		};
 	}
 	if(data0.player_name == undefined)
