@@ -26,8 +26,12 @@ handlers.LoginWithGeneratedId = function (args) {
 }
 
 handlers.GetPlayerBasicInfo = function (args) {
+	return	__get_playerbasicinfo(currentPlayerId);
+}
+
+function __get_playerbasicinfo(playfabid) {
 	var res = server.GetUserInternalData({
-		PlayFabId: currentPlayerId,
+		PlayFabId: playfabid,
 		Keys: [
 			"basic_data"
 		]
@@ -55,7 +59,7 @@ handlers.UpdatePlayerName = function (args) {
 
 	var	lockItem = __user_lock_get();
 
-	var	res1 = handlers.GetPlayerBasicInfo(args);
+	var	res1 = __get_playerbasicinfo(currentPlayerId);
 	res1.player_name = args.PlayerName;
 
 	var res2 = server.UpdateUserInternalData({
