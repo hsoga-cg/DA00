@@ -56,12 +56,12 @@ handlers.UpdatePlayerName = function (args) {
 	var	lockItem = __user_lock_get();
 
 	var	res1 = handlers.GetPlayerBasicInfo(args);
-	res1.Data.basic_data.player_name = args.player_name;
+	res1.player_name = args.player_name;
 
 	var res2 = server.UpdateUserInternalData({
 		PlayFabId: currentPlayerId,
 		Data: {
-			basic_data: response.data.Results
+			basic_data: res1
 		}
 	});
 
