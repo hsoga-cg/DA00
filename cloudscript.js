@@ -7,9 +7,7 @@ handlers.GetNews = function (args) {
 	var res = server.GetTitleNews({
 		Count: 10
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 // this is not possible because we need a SessionTicket to run cloud script.
@@ -24,40 +22,21 @@ handlers.LoginWithGeneratedId = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 handlers.GetPlayerBasicInfo = function (args) {
 	var res = server.GetUserInternalData({
-//		PlayFabId: currentPlayerId
-		PlayFabId: "xxxx"
+		PlayFabId: currentPlayerId
 	});
-
-	var updateUserDataResult = server.UpdateUserInternalData({
-		PlayFabId: currentPlayerId,
-		Data: {
-			__debug: ("(X) " + JSON.stringify(res) + " [" + res.code + "](" + (res.code == 200) + ") ")
-		}
-	});
-
-	if(res.code != 200)
-		return	res;	// TODO error handling
-//	return	res.data.Results;
-	return	{
-		code: res.code,
-		playerName: res.data.Results.playerName
-	};
+	return	res;
 }
 
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 handlers.ExchangeTransactionWithItem = function (args) {
@@ -84,9 +63,7 @@ handlers.ExchangeTransactionWithItem = function (args) {
 
 //	var	resrel = __user_lock_release(lockItem);
 
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 handlers.ConsumeItem = function (args) {
@@ -95,9 +72,7 @@ handlers.ConsumeItem = function (args) {
 		ItemInstanceId: args.ItemInstanceId,
 		ConsumeCount: 1
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
 }
 
 handlers.LotDailyReward = function (args) {
@@ -151,9 +126,12 @@ handlers.LotDailyReward = function (args) {
 		Annotation: "LotDailyReward",
 		ItemIds: [ itemid ]
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+
+	return	res;
+}
+
+handlers.Error = function (args) {
+	return	server.xxxx();
 }
 
 // custom event log is not enabled for titles by default.
@@ -166,9 +144,18 @@ handlers.LogEvent = function (args) {
 		},
 		ProfileSetEvent: true
 	});
-	if(res.code != 200)
-		return	res;	// TODO error handling
-	return	res.data.Results;
+	return	res;
+}
+
+// debug function to confirm server side value on management console
+// (replacement of logging)
+function __debug_logtext_userinternal(arg_playfabid, logtext) {
+	var updateUserDataResult = server.UpdateUserInternalData({
+		PlayFabId: arg_playfabid,
+		Data: {
+			__debug: logtext
+		}
+	});
 }
 
 
