@@ -33,10 +33,17 @@ handlers.GetPlayerBasicInfo = function (args) {
 		]
 	});
 	var	data0 = res.Data.basic_data;
+	if(data0 == undefined) {
+		return	{
+			player_name = "(undefined)",
+			player_level = 1,
+			player_exp = 0
+		};
+	}
 	if(data0.player_name == undefined)
 		data0.player_name = "(undefined)";
-	if(data0.level == undefined)
-		data0.level = 1;
+	if(data0.player_level == undefined)
+		data0.player_level = 1;
 	return	res;
 }
 
