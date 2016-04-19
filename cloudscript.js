@@ -47,6 +47,29 @@ handlers.GetPlayerBasicInfo = function (args) {
 	return	res;
 }
 
+handlers.UpdatePlayerName = function (args) {
+	if(args.PlayerName == undefined)
+		return	{
+				error: 500
+			};
+
+	var	lockItem = __user_lock_get();
+
+	var	res1 = handlers.GetPlayerBasicInfo(args);
+	res1.Data.basic_data.player_name = args.player_name;
+
+	var res2 = server.UpdateUserInternalData({
+		PlayFabId: currentPlayerId,
+		Data: {
+			basic_data: response.data.Results
+		}
+	});
+
+	var	resrel = __user_lock_release(lockItem);
+
+	return	res2;
+}
+
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
 		PlayFabId: currentPlayerId
