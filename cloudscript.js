@@ -27,8 +27,16 @@ handlers.LoginWithGeneratedId = function (args) {
 
 handlers.GetPlayerBasicInfo = function (args) {
 	var res = server.GetUserInternalData({
-		PlayFabId: currentPlayerId
+		PlayFabId: currentPlayerId,
+		Keys: [
+			"basic_data"
+		]
 	});
+	var	data0 = res.Data.basic_data;
+	if(data0.player_name == undefined || data0.player_name.length == 0)
+		data0.player_name = "(undefined)";
+	if(data0.level == undefined)
+		data0.level = 1;
 	return	res;
 }
 
@@ -131,7 +139,10 @@ handlers.LotDailyReward = function (args) {
 }
 
 handlers.Error = function (args) {
-	return	server.xxxx();
+	var resGetUserData = server.GetUserInternalData({
+		PlayFabId: "xxxx",
+		Keys: [ "__debug" ]
+	});
 }
 
 // custom event log is not enabled for titles by default.
