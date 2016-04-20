@@ -43,18 +43,18 @@ function __get_playerbasicinfo(playfabid) {
 		"Keys": [ "player_name", "player_level", "player_exp" ]
 	});
 	if (typeof res.Data.player_name === "undefined") {
-		res.Data.player_name = "(undefined)";
+		res.Data.player_name.Value = "(undefined)";
 	}
 	if (typeof res.Data.player_level === "undefined") {
-		res.Data.player_level = 1;
+		res.Data.player_level.Value = 1;
 	}
 	if (typeof res.Data.player_exp === "undefined") {
-		res.Data.player_exp = 0;
+		res.Data.player_exp.Value = 0;
 	}
 	return	{
-		"player_name": res.Data.player_name,
-		"player_level": res.Data.player_level,
-		"player_exp": res.Data.player_exp
+		"player_name": res.Data.player_name.Value,
+		"player_level": res.Data.player_level.Value,
+		"player_exp": res.Data.player_exp.Value
 	};
 }
 
