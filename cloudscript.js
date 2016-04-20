@@ -1,61 +1,68 @@
 
 // ----8< ----
 
+var	server = {};
+var	handlers = {};
+var	currentPlayerId = "";
+
 // APIs for demo
 
-handlers.GetNews = function (args) {
+handlers.GetNews = function () {
 	var res = server.GetTitleNews({
-		Count: 10
+		"Count": 10
 	});
 	return	res;
-}
+};
 
 // this is not possible because we need a SessionTicket to run cloud script.
-//handlers.GetLoginlessUserId = function (args) {
+// handlers.GetLoginlessUserId = function (args) {
 //	// TODO generate unique id
 //	var	xc_userid = "514f34bcb0fb22249af4f79a6b3aabd0";
 //
 //	return	{ xc_userid: xc_userid };
-//}
+// };
 
 handlers.LoginWithGeneratedId = function (args) {
 	var res = server.GetUserInventory({
-		PlayFabId: currentPlayerId
+		"PlayFabId": currentPlayerId
 	});
 	return	res;
-}
+};
 
 handlers.GetPlayerBasicInfo = function (args) {
 	return	__get_playerbasicinfo(currentPlayerId);
-}
+};
 
 function __get_playerbasicinfo(playfabid) {
 	var res = server.GetUserInternalData({
-		PlayFabId: playfabid,
-		Keys: [
+		"PlayFabId": playfabid,
+		"Keys": [
 			"basic_data"
 		]
 	});
 	var	data0 = res.Data.basic_data;
-	if(data0 == undefined) {
+	if (typeof data0 === "undefined") {
 		return	{
-			player_name: "(undefined)",
-			player_level: 1,
-			player_exp: 0
+			"player_name": "(undefined)",
+			"player_level": 1,
+			"player_exp": 0
 		};
 	}
-	if(data0.player_name == undefined)
+	if (typeof data0.player_name === "undefined") {
 		data0.player_name = "(undefined)";
-	if(data0.player_level == undefined)
+	}
+	if (typeof data0.player_level === "undefined") {
 		data0.player_level = 1;
+	}
 	return	res;
 }
 
 handlers.UpdatePlayerName = function (args) {
-	if(args.PlayerName == undefined)
+	if (typeof args.PlayerName === "undefined") {
 		return	{
-				error: 500
+				"error": 500
 			};
+	}
 
 	var	lockItem = __user_lock_get();
 
@@ -63,12 +70,12 @@ handlers.UpdatePlayerName = function (args) {
 	res1.player_name = args.PlayerName;
 
 	var res2 = server.UpdateUserInternalData({
-		PlayFabId: currentPlayerId,
-		Data: {
+		"PlayFabId": currentPlayerId,
+		"Data": {
 //			basic_data: {
-				player_name: "(undefined 0)",
-				player_level: 1,
-				player_exp: 0
+				"player_name": "(undefined 0)",
+				"player_level": 1,
+				"player_exp": 0
 //			}
 		}
 	});
@@ -76,14 +83,14 @@ handlers.UpdatePlayerName = function (args) {
 	var	resrel = __user_lock_release(lockItem);
 
 	return	res2;
-}
+};
 
 handlers.GetPurchasedItemList = function (args) {
 	var res = server.GetUserInventory({
-		PlayFabId: currentPlayerId
+		"PlayFabId": currentPlayerId
 	});
 	return	res;
-}
+};
 
 handlers.ExchangeTransactionWithItem = function (args) {
 	var	catalogver = "00";
@@ -101,60 +108,62 @@ handlers.ExchangeTransactionWithItem = function (args) {
 	// TODO resolve catlogver and itemid by transaction_id
 
 	var res = server.GrantItemsToUser({
-		CatalogVersion: catalogver,
-		PlayFabId: currentPlayerId,
-		Annotation: "ExchangeTransactionWithItem",
-		ItemIds: [ itemid ]
+		"CatalogVersion": catalogver,
+		"PlayFabId": currentPlayerId,
+		"Annotation": "ExchangeTransactionWithItem",
+		"ItemIds": [ itemid ]
 	});
 
 //	var	resrel = __user_lock_release(lockItem);
 
 	return	res;
-}
+};
 
 handlers.ConsumeItem = function (args) {
 	var res = server.ConsumeItem({
-		PlayFabId: currentPlayerId,
-		ItemInstanceId: args.ItemInstanceId,
-		ConsumeCount: 1
+		"PlayFabId": currentPlayerId,
+		"ItemInstanceId": args.ItemInstanceId,
+		"ConsumeCount": 1
 	});
 	return	res;
-}
+};
 
 handlers.LotDailyReward = function (args) {
 
 	// limit to only once per a day
-	var	limitsecond = 60;	//(60 * 60 * 24);
+	var	limitsecond = 60;	// (60 * 60 * 24);
 
 	var	lockItem = __user_lock_get();
-	if(!(lockItem.LockAvailable)) {
-		return	{	code: 500, msg: "failed to get user lock."	};
+	if (!(lockItem.LockAvailable)) {
+		return	{	"code": 500, "msg": "failed to get user lock."	};
 	}
 
 	var resGetUserData = server.GetUserInternalData({
-		PlayFabId: currentPlayerId,
-		Keys: [ "__sys_datetime_lastlotdailyreward" ]
+		"PlayFabId": currentPlayerId,
+		"Keys": [ "__sys_datetime_lastlotdailyreward" ]
 	});
-	var	lastdtobj = resGetUserData.Data["__sys_datetime_lastlotdailyreward"];
-	var	currdt = (new Date/1E3|0);
-	if(lastdtobj != undefined) {
+	var	lastdtobj = resGetUserData.Data.__sys_datetime_lastlotdailyreward;
+	var	currdt = (new Date() / 1E3 | 0);
+	if (typeof lastdtobj !== "undefined") {
 		var	lastdt = parseInt(lastdtobj.Value, 10);
-		if((lastdt + limitsecond) > currdt) {
-			if(lockItem.LockAvailable) {
+		if ((lastdt + limitsecond) > currdt) {
+			if (lockItem.LockAvailable) {
 				var	resrel = __user_lock_release(lockItem);
 			}
-			return	{	code: 500, msg: "reward not yet available, try later."	};
+			return	{
+				"code": 500, "msg": "reward not yet available, try later."
+			};
 		}
 	}
 
 	var updateUserDataResult = server.UpdateUserInternalData({
-		PlayFabId: currentPlayerId,
-		Data: {
-			__sys_datetime_lastlotdailyreward: currdt
+		"PlayFabId": currentPlayerId,
+		"Data": {
+			"__sys_datetime_lastlotdailyreward": currdt
 		}
 	});
 
-	if(lockItem.LockAvailable) {
+	if (lockItem.LockAvailable) {
 		var	resrel = __user_lock_release(lockItem);
 	}
 
@@ -167,63 +176,62 @@ handlers.LotDailyReward = function (args) {
 		Math.floor(Math.random() * possibleitemids.length)];
 
 	var res = server.GrantItemsToUser({
-		CatalogVersion: catalogver,
-		PlayFabId: currentPlayerId,
-		Annotation: "LotDailyReward",
-		ItemIds: [ itemid ]
+		"CatalogVersion": catalogver,
+		"PlayFabId": currentPlayerId,
+		"Annotation": "LotDailyReward",
+		"ItemIds": [ itemid ]
 	});
 
 	return	res;
-}
+};
 
 handlers.Error = function (args) {
 	var resGetUserData = server.GetUserInternalData({
-		PlayFabId: "xxxx",
-		Keys: [ "__debug" ]
+		"PlayFabId": "xxxx",
+		"Keys": [ "__debug" ]
 	});
-}
+};
 
 // custom event log is not enabled for titles by default.
 // need to contact devrel@playfab.com
 handlers.LogEvent = function (args) {
 	var res = server.LogEvent({
-		PlayFabId: currentPlayerId,
-		EventName: args.EventName,
-		Body: {
+		"PlayFabId": currentPlayerId,
+		"EventName": args.EventName,
+		"Body": {
 		},
-		ProfileSetEvent: true
+		"ProfileSetEvent": true
 	});
 	return	res;
-}
+};
 
 // debug function to confirm server side value on management console
 // (replacement of logging)
 function __debug_logtext_userinternal(arg_playfabid, logtext) {
 	var updateUserDataResult = server.UpdateUserInternalData({
-		PlayFabId: arg_playfabid,
-		Data: {
-			__debug: logtext
+		"PlayFabId": arg_playfabid,
+		"Data": {
+			"__debug": logtext
 		}
 	});
-}
+};
 
 
 // ----8< ----
 
-var	__g_testglobal;
+var	__g_testglobal = 0;
 
 //
 handlers.helloExtRest = function (args) {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
-	// XXX debug
 	var resGetInv = server.GetUserInventory({
-		PlayFabId: currentPlayerId
+		"PlayFabId": currentPlayerId
 	});
 
 	var	lockItem = __user_lock_get();
-	if(lockItem.LockAvailable) {
+	if (lockItem.LockAvailable) {
 		msg0 += " (lock acquired. using " + lockItem.ItemInstanceId + ")";
 	}
 
@@ -232,47 +240,47 @@ handlers.helloExtRest = function (args) {
 //	msg0 += ("\n\n restres -> " + restres.substring(0, 400) + " ::::");
 
 	var	resrel = null;
-	if(lockItem.LockAvailable) {
+	if (lockItem.LockAvailable) {
 		resrel = __user_lock_release(lockItem);
 		msg0 += " -> lock released.";
 	}
 
 	return {
-		message: msg0,
-		testglobal: __g_testglobal,
-		releaseResult: resrel,
-		lockItem: lockItem,
-		resGetInv: resGetInv,	// XXX debug
-//		grantResult: resGrant,
-//		modifyResult: resModify,
-//		consumeResult: resConsume1,
-//		consumeResult2: resConsume2,
-		dummy: stemp
+		"message": msg0,
+		"testglobal": __g_testglobal,
+		"releaseResult": resrel,
+		"lockItem": lockItem,
+		"resGetInv": resGetInv,
+//		"grantResult": resGrant,
+//		"modifyResult": resModify,
+//		"consumeResult": resConsume1,
+//		"consumeResult2": resConsume2,
+		"dummy": stemp
 		};
-}
+};
 
 
 handlers.exchangeBillingTrxWithItem = function (args) {
-}
+};
 
 function __user_lock_init_or_find() {
 
 	// if there's already one allocated, reuse it
 	var resGetUserData = server.GetUserInternalData({
-		PlayFabId: currentPlayerId,
-		Keys: [ "__sys_userlock_iteminstanceid" ]
+		"PlayFabId": currentPlayerId,
+		"Keys": [ "__sys_userlock_iteminstanceid" ]
 	});
-	var	lock_iiid = resGetUserData.Data["__sys_userlock_iteminstanceid"];
-	if(lock_iiid != undefined) {
-		//lock_iiid.Value
+	var	lock_iiid = resGetUserData.Data.__sys_userlock_iteminstanceid;
+	if (typeof lock_iiid !== "undefined") {
+		// lock_iiid.Value
 
 		// Remaining count should be 1
 		var resGetInv = server.GetUserInventory({
-			PlayFabId: currentPlayerId
+			"PlayFabId": currentPlayerId
 		});
-		for(var idx in resGetInv.Inventory) {
+		for (var idx in resGetInv.Inventory) {
 			var	otemp = resGetInv.Inventory[idx];
-			if(otemp.ItemId == "__sys_userlock" &&
+			if (otemp.ItemId === "__sys_userlock" &&
 				otemp.RemainingUses > 0) {
 				otemp.AddMsg = "(found in user inventory)";
 				return	otemp;
@@ -282,48 +290,49 @@ function __user_lock_init_or_find() {
 		// there's instance id in user data but that was not found in inventory.
 		// -> another thread has the lock
 		return	{
-			RemainingUses: 0,
-			AddMsg: "Lock not available"
+			"RemainingUses": 0,
+			"AddMsg": "Lock not available"
 			};
 	}
 
 	// create new one
 	var resGrant = server.GrantItemsToUser({
-		CatalogVersion: "00",
-		PlayFabId: currentPlayerId,
-		Annotation: "system",
-		ItemIds: [
+		"CatalogVersion": "00",
+		"PlayFabId": currentPlayerId,
+		"Annotation": "system",
+		"ItemIds": [
 			"__sys_userlock"
 		]
 	});
+
 /*
 	var resultsample = {
-		ItemGrantResults: [  
-			{  
-				PlayFabId: "941A46BF4A360962",
-				Result: true,
-				ItemId: "__sys_userlock",
-				ItemInstanceId: "B5D09207887C1A38",
-				ItemClass: "system",
-				PurchaseDate: "2016-03-31T10:17:15.269Z",
-				RemainingUses: 1,
-				Annotation: "system",
-				CatalogVersion: "00",
-				UnitPrice: 0
+		"ItemGrantResults": [
+			{
+				"PlayFabId": "941A46BF4A360962",
+				"Result": true,
+				"ItemId": "__sys_userlock",
+				"ItemInstanceId": "B5D09207887C1A38",
+				"ItemClass": "system",
+				"PurchaseDate": "2016-03-31T10:17:15.269Z",
+				"RemainingUses": 1,
+				"Annotation": "system",
+				"CatalogVersion": "00",
+				"UnitPrice": 0
 			}
 		]
 	};
 */
 
 	// record lock ItemInstanceId in UserInternalData
-	if(resGrant.ItemGrantResults.length > 0
-		&& resGrant.ItemGrantResults[0].Result == true) {
+	if (resGrant.ItemGrantResults.length > 0
+		&& resGrant.ItemGrantResults[0].Result === true) {
 		var	oret = resGrant.ItemGrantResults[0];
 		var lock_iteminstanceid = oret.ItemInstanceId;
 		var updateUserDataResult = server.UpdateUserInternalData({
-			PlayFabId: currentPlayerId,
-			Data: {
-				__sys_userlock_iteminstanceid: lock_iteminstanceid
+			"PlayFabId": currentPlayerId,
+			"Data": {
+				"__sys_userlock_iteminstanceid": lock_iteminstanceid
 			}
 		});
 		oret.AddMsg = "returning newly created lock instance";
@@ -337,13 +346,13 @@ function __user_lock_get() {
 	var	addmsg = "";
 	//
 	var	lockItem = __user_lock_init_or_find();
-	if(lockItem == null) {
+	if (lockItem === null) {
 		return	{
-			LockAvailable: false,
-			AddMsg: "failed to get lock."
+			"LockAvailable": false,
+			"AddMsg": "failed to get lock."
 		};
 	} else
-	if(lockItem.RemainingUses == 0 ||
+	if (lockItem.RemainingUses === 0 ||
 		lockItem.RemainingUses > 1) {	// TODO handle case RemainingUses > 1
 		lockItem.LockAvailable = false;
 		lockItem.AddMsg += " -> failed to get lock. (RemainingUses: "
@@ -354,20 +363,20 @@ function __user_lock_get() {
 
 	//
 	var resConsume1 = server.ConsumeItem({
-		PlayFabId: currentPlayerId,
-		ItemInstanceId: lockItem.ItemInstanceId,
-		ConsumeCount: 1
+		"PlayFabId": currentPlayerId,
+		"ItemInstanceId": lockItem.ItemInstanceId,
+		"ConsumeCount": 1
 	});
-	if(resConsume1.RemainingUses == 0) {
+	if (resConsume1.RemainingUses === 0) {
 		// success
 		lockItem.RemainingUses = 0;
 		lockItem.LockAvailable = true;
 		lockItem.AddMsg = addmsg;
 		return	lockItem;
-	} else {
-		// failed to get user lock
-		return	{ LockAvailable: false };
 	}
+
+	// failed to get user lock
+	return	{ "LockAvailable": false };
 }
 
 function __user_lock_release(lockItem) {
@@ -375,15 +384,16 @@ function __user_lock_release(lockItem) {
 	var	prevremaininguses = lockItem.RemainingUses;
 
 	var	toadd = 1;
-	if(prevremaininguses > 1)
+	if (prevremaininguses > 1) {
 		toadd = 1 - prevremaininguses;
+	}
 	//
 	var resModify = server.ModifyItemUses({
-		PlayFabId: currentPlayerId,
-		ItemInstanceId: lockItemId,
-		UsesToAdd: toadd
+		"PlayFabId": currentPlayerId,
+		"ItemInstanceId": lockItemId,
+		"UsesToAdd": toadd
 	});
-	if(resModify.RemainingUses == 1) {
+	if (resModify.RemainingUses == 1) {
 		// success
 	} else {
 		// need to adjust to 1, but possibly it is program bug.
