@@ -2,9 +2,12 @@
 // ----8< ----
 
 // to run lint
-// var	server = {};
-// var	handlers = {};
-// var	currentPlayerId = "";
+// eslint --init
+// .eslintrc.js
+//   new-cap: off, object-curly-spacing: [error, always], no-extra-parens: off,
+//   (comma-dangle: off)
+// eslint --global server,handlers,currentPlayerId cloudscript.js
+
 
 // APIs for demo
 
@@ -23,39 +26,36 @@ handlers.GetNews = function () {
 //	return	{ xc_userid: xc_userid };
 // };
 
-handlers.LoginWithGeneratedId = function (args) {
+handlers.LoginWithGeneratedId = function () {
 	var res = server.GetUserInventory({
 		"PlayFabId": currentPlayerId
 	});
 	return	res;
 };
 
-handlers.GetPlayerBasicInfo = function (args) {
+handlers.GetPlayerBasicInfo = function () {
 	return	__get_playerbasicinfo(currentPlayerId);
 };
 
 function __get_playerbasicinfo(playfabid) {
 	var res = server.GetUserInternalData({
 		"PlayFabId": playfabid,
-		"Keys": [
-			"basic_data"
-		]
+		"Keys": [ "player_name", "player_level", "player_exp" ]
 	});
-	var	data0 = res.Data.basic_data;
-	if (typeof data0 === "undefined") {
-		return	{
-			"player_name": "(undefined)",
-			"player_level": 1,
-			"player_exp": 0
-		};
+	if (typeof res.Data.player_name === "undefined") {
+		res.Data.player_name = "(undefined)";
 	}
-	if (typeof data0.player_name === "undefined") {
-		data0.player_name = "(undefined)";
+	if (typeof res.Data.player_level === "undefined") {
+		res.Data.player_level = 1;
 	}
-	if (typeof data0.player_level === "undefined") {
-		data0.player_level = 1;
+	if (typeof res.Data.player_exp === "undefined") {
+		res.Data.player_exp = 0;
 	}
-	return	res;
+	return	{
+		"player_name": res.Data.player_name,
+		"player_level": res.Data.player_level,
+		"player_exp": res.Data.player_exp
+	};
 }
 
 handlers.UpdatePlayerName = function (args) {
@@ -67,33 +67,30 @@ handlers.UpdatePlayerName = function (args) {
 
 	var	lockItem = __user_lock_get();
 
-	var	res1 = __get_playerbasicinfo(currentPlayerId);
-	res1.player_name = args.PlayerName;
+//	var	res1 = __get_playerbasicinfo(currentPlayerId);
+//	res1.player_name = args.PlayerName;
 
+	// note: value of "Data" param cannot be a JSON object
 	var res2 = server.UpdateUserInternalData({
 		"PlayFabId": currentPlayerId,
 		"Data": {
-//			basic_data: {
-				"player_name": "(undefined 0)",
-				"player_level": 1,
-				"player_exp": 0
-//			}
+			"player_name": args.PlayerName
 		}
 	});
 
-	var	resrel = __user_lock_release(lockItem);
+	__user_lock_release(lockItem);
 
 	return	res2;
 };
 
-handlers.GetPurchasedItemList = function (args) {
+handlers.GetPurchasedItemList = function () {
 	var res = server.GetUserInventory({
 		"PlayFabId": currentPlayerId
 	});
 	return	res;
 };
 
-handlers.ExchangeTransactionWithItem = function (args) {
+handlers.ExchangeTransactionWithItem = function () {
 	var	catalogver = "00";
 	var	itemid = "i_01";
 
@@ -115,7 +112,7 @@ handlers.ExchangeTransactionWithItem = function (args) {
 		"ItemIds": [ itemid ]
 	});
 
-//	var	resrel = __user_lock_release(lockItem);
+//	__user_lock_release(lockItem);
 
 	return	res;
 };
@@ -129,7 +126,7 @@ handlers.ConsumeItem = function (args) {
 	return	res;
 };
 
-handlers.LotDailyReward = function (args) {
+handlers.LotDailyReward = function () {
 
 	// limit to only once per a day
 	var	limitsecond = 60;	// (60 * 60 * 24);
@@ -149,7 +146,7 @@ handlers.LotDailyReward = function (args) {
 		var	lastdt = parseInt(lastdtobj.Value, 10);
 		if ((lastdt + limitsecond) > currdt) {
 			if (lockItem.LockAvailable) {
-				var	resrel = __user_lock_release(lockItem);
+				__user_lock_release(lockItem);
 			}
 			return	{
 				"code": 500, "msg": "reward not yet available, try later."
@@ -157,7 +154,7 @@ handlers.LotDailyReward = function (args) {
 		}
 	}
 
-	var updateUserDataResult = server.UpdateUserInternalData({
+	server.UpdateUserInternalData({
 		"PlayFabId": currentPlayerId,
 		"Data": {
 			"__sys_datetime_lastlotdailyreward": currdt
@@ -165,7 +162,7 @@ handlers.LotDailyReward = function (args) {
 	});
 
 	if (lockItem.LockAvailable) {
-		var	resrel = __user_lock_release(lockItem);
+		__user_lock_release(lockItem);
 	}
 
 	// lot an item and give it
@@ -186,8 +183,8 @@ handlers.LotDailyReward = function (args) {
 	return	res;
 };
 
-handlers.Error = function (args) {
-	var resGetUserData = server.GetUserInternalData({
+handlers.Error = function () {
+	server.GetUserInternalData({
 		"PlayFabId": "xxxx",
 		"Keys": [ "__debug" ]
 	});
@@ -208,8 +205,8 @@ handlers.LogEvent = function (args) {
 
 // debug function to confirm server side value on management console
 // (replacement of logging)
-function __debug_logtext_userinternal(arg_playfabid, logtext) {
-	var updateUserDataResult = server.UpdateUserInternalData({
+var __debug_logtext_userinternal = function (arg_playfabid, logtext) {
+	server.UpdateUserInternalData({
 		"PlayFabId": arg_playfabid,
 		"Data": {
 			"__debug": logtext
@@ -223,7 +220,7 @@ function __debug_logtext_userinternal(arg_playfabid, logtext) {
 var	__g_testglobal = 0;
 
 //
-handlers.helloExtRest = function (args) {
+handlers.helloExtRest = function () {
 	var	stemp = "";
 	var msg0 = "Hello " + currentPlayerId + "!";
 
@@ -261,7 +258,8 @@ handlers.helloExtRest = function (args) {
 };
 
 
-handlers.exchangeBillingTrxWithItem = function (args) {
+handlers.exchangeBillingTrxWithItem = function () {
+	return;
 };
 
 function __user_lock_init_or_find() {
