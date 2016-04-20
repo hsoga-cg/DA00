@@ -1,9 +1,10 @@
 
 // ----8< ----
 
-var	server = {};
-var	handlers = {};
-var	currentPlayerId = "";
+// to run lint
+// var	server = {};
+// var	handlers = {};
+// var	currentPlayerId = "";
 
 // APIs for demo
 
